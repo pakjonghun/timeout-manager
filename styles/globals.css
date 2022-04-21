@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply font-medium text-xl;
+  }
+
+  h2 {
+    @apply font-medium text-lg;
+  }
+}
+
+@layer components {
+  .transition {
+    @apply transition-all duration-75 ease-linear;
+  }
+
+  .inputFocus {
+    @apply transition focus:ring-1 focus:ring-green-500 focus:border-green-600;
+  }
+
+  .scale {
+    @apply transition hover:scale-[101%] active:scale-100;
+  }
+
+  .scale-md {
+    @apply transition hover:scale-[103%] active:scale-100;
+  }
+
+  .scale-lg {
+    @apply transition hover:scale-105 active:scale-100;
+  }
+
+  .font-md {
+    @apply font-medium text-sm;
+  }
+
+  .menu {
+    @apply font-md scale-md;
+  }
+
+  .crossAlign {
+    @apply mt-28 sm:mt-32 lg:mt-36;
+  }
+
+  .publicArticle {
+    @apply crossAlign space-y-5 py-8 px-5 bg-gray-50 rounded-md shadow-md;
+  }
+
+  .roundShadow-md {
+    @apply rounded-md shadow-md;
+  }
+
+  .normalInput {
+    @apply px-5 py-2 border-gray-400  rounded-sm shadow-md inputFocus;
+  }
+}

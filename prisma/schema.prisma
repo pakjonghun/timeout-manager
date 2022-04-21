@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String 
+  phone String @unique
+  email String @unique
+  avatar String?
+  role Role @default(USER)
+  status Status @default(NOTWORKING)
+  auths Auths[]
+  posts Posts[]
+  comments Comments[]
+  recomments ReComments[]
+  answers Answers[]
+  worktimes WorkTimes[]
+}
+
+model Auths{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authNumber Int
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+}
+
+model Posts{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title String
+  description String @db.MediumText
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+  comments Comments[]
+  answer Answers?
+}
+
+model Comments{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  description String @db.MediumText
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+  postId Int
+  post Posts @relation(fields: [postId], references: [id],onDelete: Cascade)
+  recomments ReComments[]
+}
+
+model ReComments{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  description String @db.MediumText
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+  commentId Int
+  comment Comments @relation(fields: [commentId], references: [id],onDelete: Cascade)
+}
+
+model Answers{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  description String @db.MediumText
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+  postId Int
+  post Posts @relation(fields: [postId], references: [id],onDelete: Cascade)
+}
+
+model WorkTimes{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId Int
+  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
+  start DateTime @default(now())
+  end DateTime?
+  duration Int?
+}
+
+model Options{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  canWorkTime DateTime
+  canEndTime DateTime
+}
+
+enum Status{
+ WORKING
+ DONE
+ NOTWORKING
+}
+
+enum Role{
+  ADMIN
+  USER
+}
