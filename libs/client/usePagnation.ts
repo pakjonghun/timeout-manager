@@ -1,33 +1,45 @@
-import { useState, useCallback } from "react";
-import useSWR from "swr";
+import { useCallback } from "react";
+import { NextPageType } from "./../../store/reducer/adminRecordReducer";
+import { createAction } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "@libs/client/useRedux";
+import { useGetRecordsByPageQuery } from "@store/services/record";
 
 type UsePagnationType = {
   page: number;
+  totalPage?: number;
   onNextPage: () => void;
-  onPrePage: () => void;
+  onPreviousPage: () => void;
 };
 
-type PagnationResType = {
-  totalPage: number;
-};
+const usePage = (reducerName?: string | null): UsePagnationType => {
+  const dispatch = useDispatch();
+  const query = useAppSelector((state) => state.query.recordQuery);
+  const page = useAppSelector((state) => {
+    //@ts-ignore
+    if (!state[reducerName]) return 1;
+    //@ts-ignore
+    return state[reducerName].currentPage;
+  });
 
-const usePagnation = <T extends PagnationResType>(
-  key: string
-): UsePagnationType => {
-  const { data: records } = useSWR<T>(key);
-
-  const [page, setPage] = useState(1);
+  const { data: records } = useGetRecordsByPageQuery(query);
+  const totalPage = records?.totalPage;
 
   const onNextPage = useCallback(() => {
-    if (!records?.totalPage) return;
-    setPage(page >= records.totalPage ? page : page + 1);
-  }, [page, records?.totalPage]);
+    if (!totalPage || !reducerName) return;
 
-  const onPrePage = useCallback(() => {
-    setPage(page !== 1 ? page - 1 : 1);
-  }, [page]);
+    const nextPage = createAction<NextPageType>(`${reducerName}/nextPage`);
+    dispatch(nextPage({ totalPage }));
+  }, [totalPage, reducerName, dispatch]);
 
-  return { page, onNextPage, onPrePage };
+  const onPreviousPage = useCallback(() => {
+    if (!reducerName) return;
+
+    const previousPage = createAction(`${reducerName}/previousPage`);
+    dispatch(previousPage());
+  }, [reducerName, dispatch]);
+
+  return { page, totalPage, onNextPage, onPreviousPage };
 };
 
-export default usePagnation;
+export default usePage;

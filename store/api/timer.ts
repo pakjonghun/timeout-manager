@@ -1,8 +1,8 @@
 import { TimeType } from "@libs/server/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { end, setStartTime, start } from "@store/reducer/timerReducer";
 import { setStatus } from "store/reducer/userReducer";
 import { dataFetch } from "@libs/client/utils";
+import { setStartTime } from "@store/reducer/timerReducer";
 
 export const startTimer = createAsyncThunk(
   "timer/start",
@@ -15,9 +15,7 @@ export const startTimer = createAsyncThunk(
     const data = (await res.json()) as TimeType;
 
     if (data.success) {
-      api.dispatch(start());
       api.dispatch(setStatus("WORKING"));
-      api.dispatch(setStartTime(startTime));
     }
     return data;
   }
@@ -36,9 +34,7 @@ export const endTimer = createAsyncThunk(
     const data = (await res.json()) as TimeType;
 
     if (data.success) {
-      api.dispatch(end());
       api.dispatch(setStatus("NOTWORKING"));
-      api.dispatch(setStartTime(""));
     }
     return data;
   }

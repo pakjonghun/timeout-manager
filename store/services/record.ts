@@ -10,7 +10,7 @@ export const getRecords = createApi({
   }),
   endpoints: (builder) => ({
     getRecordsByPage: builder.query<UserRecordType, string>({
-      query: (query) => `/api/records?${query}`,
+      query: (query) => `api/records?${query}`,
     }),
   }),
 });

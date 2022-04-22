@@ -5,11 +5,12 @@ import { format } from "date-fns";
 
 const StatusMessages = () => {
   const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
-  const startTime = useAppSelector((state) => new Date(state.timer.startTime));
+  const startTime = useAppSelector((state) => state.timer.startTime);
   const canStartTime = getCanStartTime();
 
   if (!startTime) return null;
-  const canStart = startTime.getTime() < canStartTime.getTime();
+  const startDate = new Date(startTime);
+  const canStart = startDate.getTime() < canStartTime.getTime();
 
   return (
     <>
@@ -19,7 +20,7 @@ const StatusMessages = () => {
 
       {timeoutStatus === "end" && (
         <h2 className="my-3 text-gray-600">
-          초과근무가 {format(startTime, "HH:mm")}에 시작되었습니다.
+          초과근무가 {format(startDate, "HH:mm")}에 시작되었습니다.
         </h2>
       )}
     </>

@@ -91,7 +91,6 @@ const AdminRecordTable = ({}) => {
       />
       {records?.records &&
         records.records.map((v) => {
-          console.log(selectedIds, v.id);
           switch (userRole) {
             case "ADMIN":
               return (

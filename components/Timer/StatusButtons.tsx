@@ -1,8 +1,8 @@
+import { memo } from "react";
 import { NextPage } from "next";
 import StatusButton from "./StatusButton";
 import { useAppSelector } from "@libs/client/useRedux";
 import { joinStyleClass } from "@libs/client/utils";
-import { memo } from "react";
 
 interface props {
   onClickTimerButton: () => void;

@@ -2,8 +2,8 @@ import { Role, Status } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IUserState {
-  role: Role | null;
-  status: Status | null;
+  role?: Role | null;
+  status?: Status | null;
 }
 
 const initialState: IUserState = {

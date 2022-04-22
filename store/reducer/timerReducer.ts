@@ -8,7 +8,6 @@ interface ITimerState {
   isError: boolean;
   isStatusChanging: boolean;
   timeoutStatus: TimeoutStatusType;
-  startTime: string;
 }
 
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
@@ -19,7 +18,6 @@ const initialState: ITimerState = {
   isError: false,
   isStatusChanging: false,
   timeoutStatus: "start",
-  startTime: "",
 };
 
 const timerSlice = createSlice({
@@ -37,9 +35,6 @@ const timerSlice = createSlice({
     },
     setTimerStatus: (state, { payload }: PayloadAction<TimeoutStatusType>) => {
       state.timeoutStatus = payload;
-    },
-    setStartTime: (state, { payload }: PayloadAction<string>) => {
-      state.startTime = payload;
     },
   },
   extraReducers: (builder) => {
@@ -73,6 +68,6 @@ const timerSlice = createSlice({
   },
 });
 
-export const { setStartTime, start, end, setIsStatusChanging, setTimerStatus } =
+export const { start, end, setIsStatusChanging, setTimerStatus } =
   timerSlice.actions;
 export default timerSlice.reducer;

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { NextPage } from "next";
 import Input from "@components/Input";
 import Modal from "@components/Modal";
@@ -6,19 +6,17 @@ import ModalTitle from "@components/ModalTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import ModalButtons from "./ModalButtons";
 import { FetchType } from "@libs/client/useMutation";
-import { UserRecordType, UserRecordWithUser } from "@libs/server/types";
-import useSWR from "swr";
+import { UserRecordWithUser } from "@libs/server/types";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { AnimatePresence } from "framer-motion";
+import useModal from "@libs/client/useModal";
+import { useGetRecordsByPageQuery } from "@store/services/record";
+import { useAppSelector } from "@libs/client/useRedux";
 
 interface props {
-  isShow: boolean;
   data?: UserRecordWithUser | null;
-  recordUrl: string;
-  setIsShowEditModal: Dispatch<SetStateAction<boolean>>;
   updateRecords: FetchType;
-  onClose: (event: React.MouseEvent<HTMLElement>, cb?: Function) => void;
 }
 
 interface form {
@@ -27,21 +25,15 @@ interface form {
   date: string;
 }
 
-const EditProfileModal: NextPage<props> = ({
-  isShow,
-  data,
-  recordUrl,
-  setIsShowEditModal,
-  updateRecords,
-  onClose,
-}) => {
-  const { mutate: mutateRecords } = useSWR<UserRecordType>(recordUrl);
+const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
+  const { isShowModal, onHideModal } = useModal("userRecordEdit");
+  const query = useAppSelector((state) => state.query.recordQuery);
+  const { refetch } = useGetRecordsByPageQuery(query);
 
   const {
     register,
     handleSubmit,
     setValue,
-    reset,
     watch,
     formState: { errors },
   } = useForm<form>({
@@ -58,12 +50,12 @@ const EditProfileModal: NextPage<props> = ({
         end = new Date(`${date} ${endTime}`);
         duration = end.getTime() - start.getTime();
         updateRecords({ start, end, duration, id: data?.id }, () => {
-          mutateRecords();
-          setIsShowEditModal(false);
+          refetch();
+          onHideModal();
         });
       }
     },
-    [data, mutateRecords, setIsShowEditModal, updateRecords]
+    [data, refetch, onHideModal, updateRecords]
   );
 
   useEffect(() => {
@@ -74,8 +66,8 @@ const EditProfileModal: NextPage<props> = ({
 
   return (
     <AnimatePresence>
-      {isShow && (
-        <Modal onClose={(event) => onClose(event, reset)}>
+      {isShowModal && (
+        <Modal onClose={onHideModal}>
           <ModalTitle
             title="초과근무 수정"
             role="success"
@@ -148,7 +140,7 @@ const EditProfileModal: NextPage<props> = ({
               size="lg"
             />
             <ErrorMessage classes="ml-1" message={errors?.endTime?.message} />
-            <ModalButtons onClose={onClose} onConfirm={() => {}} />
+            <ModalButtons onClose={onHideModal} onConfirm={() => {}} />
           </form>
         </Modal>
       )}

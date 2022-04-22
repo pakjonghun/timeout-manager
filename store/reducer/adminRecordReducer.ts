@@ -15,19 +15,25 @@ type AdminRecordStateType = {
   thead: AdminRecordHeaderType;
   selectedIds: number[];
   isAllSelected: boolean;
-  currentSort: keyof AdminRecordHeaderType | null;
+  currentPage: number;
+  currentSort: [keyof AdminRecordHeaderType | null, SortType | null];
 };
 
 const initialState: AdminRecordStateType = {
   thead,
   selectedIds: [],
   isAllSelected: false,
-  currentSort: null,
+  currentPage: 1,
+  currentSort: [null, null],
 };
 
 type SortPayloadType = {
   title: keyof AdminRecordHeaderType;
   sort: SortType;
+};
+
+export type NextPageType = {
+  totalPage: number;
 };
 
 const adminRecordSlice = createSlice({
@@ -38,11 +44,12 @@ const adminRecordSlice = createSlice({
       const { title, sort } = payload;
       state.thead[title].sort = sort;
 
-      if (state.currentSort && state.currentSort !== title) {
-        state.thead[state.currentSort].sort = null;
+      if (state.currentSort[0] && state.currentSort[0] !== title) {
+        state.thead[state.currentSort[0]].sort = null;
       }
 
-      state.currentSort = title;
+      state.currentSort[0] = title;
+      state.currentSort[1] = sort;
     },
     addItem: (state, { payload }: PayloadAction<number>) => {
       state.selectedIds.push(payload);
@@ -57,6 +64,14 @@ const adminRecordSlice = createSlice({
     clearAll: (state) => {
       state.isAllSelected = false;
       state.selectedIds = [];
+    },
+    nextPage: (state, { payload }: PayloadAction<NextPageType>) => {
+      if (payload.totalPage > state.currentPage) {
+        state.currentPage = state.currentPage + 1;
+      }
+    },
+    previousPage: (state) => {
+      if (state.currentPage) state.currentPage = state.currentPage - 1;
     },
   },
 });

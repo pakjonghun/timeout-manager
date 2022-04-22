@@ -1,31 +1,25 @@
 import Modal from "@components/Modal";
 import ModalTitle from "@components/ModalTitle";
 import ModalButtons from "@components/Modals/ModalButtons";
-import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { AnimatePresence } from "framer-motion";
 import { getDuration } from "@libs/client/utils";
 import useModal from "@libs/client/useModal";
-import { useCallback } from "react";
-import { endTimer } from "@store/api/timer";
+import { NextPage } from "next";
+import { toast } from "react-toastify";
 import { useGetRecordByDateQuery } from "@store/services/timer";
 
-const TimeoutConfirmModal = () => {
-  const dispatch = useAppDispatch();
-  const startTime = useAppSelector((state) => state.timer.startTime);
-  const startTimeDate = startTime ? new Date(startTime).getTime() : null;
+interface props {
+  title: string;
+  message: string;
+  onConfirm: () => void;
+}
+
+const TimeoutConfirmModal: NextPage<props> = ({
+  message,
+  title,
+  onConfirm,
+}) => {
   const { isShowModal, onHideModal } = useModal("confirmTimer");
-  const { refetch } = useGetRecordByDateQuery("");
-
-  const onConfirmClick = useCallback(() => {
-    dispatch(endTimer({ startTime, endTime: new Date().toString() }));
-    refetch();
-    onHideModal();
-  }, [startTime, onHideModal, dispatch, refetch]);
-
-  if (!startTimeDate) return null;
-
-  const currentTime = new Date().getTime();
-  const duration = getDuration(currentTime - startTimeDate);
 
   return (
     <AnimatePresence>
@@ -46,14 +40,10 @@ const TimeoutConfirmModal = () => {
           />
 
           <main className="mt-7 space-y-8">
-            <h4 className="mb-1 font-medium text-md text-gray-600">
-              초과근무를 종료 하겠습니까?
-            </h4>
-            <span className="text-gray-400 text-sm">
-              누적시간은 {duration} 입니다.
-            </span>
+            <h4 className="mb-1 font-medium text-md text-gray-600">{title}</h4>
+            <span className="text-gray-400 text-sm">{message}</span>
 
-            <ModalButtons onConfirm={onConfirmClick} onClose={onHideModal} />
+            <ModalButtons onConfirm={onConfirm} onClose={onHideModal} />
           </main>
         </Modal>
       )}

@@ -5,6 +5,7 @@ import { AdminRecordHeaderType, UserRecordHeaderType } from "./types/dataTypes";
 import { sort } from "@store/reducer/userRecordReducer";
 import { sort as adminSort } from "@store/reducer/adminRecordReducer";
 import { useDispatch } from "react-redux";
+import { createAction } from "@reduxjs/toolkit";
 
 const useSort = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const useSort = () => {
           if (!preSort) return;
           const curSort =
             preSort === null ? "asc" : (sortStatus[preSort] as SortType);
+
           dispatch(sort({ title: value, sort: curSort }));
           break;
 

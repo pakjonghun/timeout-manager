@@ -1,22 +1,20 @@
 import { NextPage } from "next";
 import { joinStyleClass } from "@libs/client/utils";
-import { UserRecordType } from "@libs/server/types";
-import useSWR from "swr";
 
 interface props {
   page: number;
-  recordUrl: string;
+  totalPage?: number;
   onNextPage: () => void;
   onPrePage: () => void;
 }
 
 const PageNationButtons: NextPage<props> = ({
   page,
-  recordUrl,
+  totalPage,
   onNextPage,
   onPrePage,
 }) => {
-  const { data: records } = useSWR<UserRecordType>(recordUrl);
+  if (!totalPage) return null;
 
   return (
     <div className="space-x-10 text-center text-lg">
@@ -33,7 +31,7 @@ const PageNationButtons: NextPage<props> = ({
         onClick={onNextPage}
         className={joinStyleClass(
           "inline-block cursor-pointer scale-md hover:text-gray-700",
-          records?.totalPage && page < records.totalPage
+          page < totalPage
             ? " text-gray-500"
             : "text-gray-300 pointer-events-none"
         )}
