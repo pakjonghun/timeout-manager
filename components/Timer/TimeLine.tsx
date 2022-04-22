@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { setIsStatusChanging } from "@store/reducer/timerReducer";
 import { motion, AnimatePresence } from "framer-motion";
+import TimeIndicator from "./TimeIndicator";
 
 interface props {
   hour: number;
@@ -17,7 +18,7 @@ const TimeLine: NextPage<props> = ({ hour, minute, second }) => {
   const getStringTime = useCallback((time: number) => {
     const len = time.toString().length;
     if (len === 1) return `0${time}`;
-    return time;
+    return time.toString();
   }, []);
 
   const setIsStatusChangingHandler = useCallback(
@@ -37,9 +38,9 @@ const TimeLine: NextPage<props> = ({ hour, minute, second }) => {
           className="relative mb-2 text-4xl origin-bottom"
         >
           <div className="w-56 grid grid-cols-8 place-items-center text-gray-600">
-            <span className="col-span-2">{getStringTime(hour)}</span>
+            <TimeIndicator time={getStringTime(hour)} />
             <span className="relative -top-[2px]">:</span>
-            <span className="col-span-2">{getStringTime(minute)}</span>
+            <TimeIndicator time={getStringTime(minute)} />
             <span className="relative -top-[2px]">:</span>
             <span className="col-span-2">{getStringTime(second)}</span>
           </div>

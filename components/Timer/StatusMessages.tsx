@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { getCanStartTime } from "@libs/server/utils";
-import { format } from "date-fns";
 import { useAppSelector } from "@libs/client/useRedux";
+import { format } from "date-fns";
 
 const StatusMessages = () => {
   const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
@@ -25,4 +26,4 @@ const StatusMessages = () => {
   );
 };
 
-export default StatusMessages;
+export default memo(StatusMessages);

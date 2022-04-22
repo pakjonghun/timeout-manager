@@ -20,13 +20,15 @@ const Timer: NextPage<props> = ({ children }) => {
   const interval = useRef<NodeJS.Timer[]>([]);
   const [hourTrigger, setHourTrigger] = useState(0);
   const [minuteTrigger, setMinuteTrigger] = useState(0);
-
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
-  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
+
   const { onShowModal } = useModal("confirmTimer");
   const { refetch } = useGetRecordByDateQuery("");
+  const { data: myStatus } = useGetMeStatusQuery("");
+  const { data: workTime } = useGetRecordByDateQuery("");
+  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
 
   const onClickTimerButton = useCallback(() => {
     if (timeoutStatus === "end") return onShowModal();
@@ -34,9 +36,6 @@ const Timer: NextPage<props> = ({ children }) => {
     dispatch(startTimer(now));
     refetch();
   }, [timeoutStatus, dispatch, onShowModal, refetch]);
-
-  const { data: myStatus } = useGetMeStatusQuery("");
-  const { data: workTime } = useGetRecordByDateQuery("");
 
   useEffect(() => {
     if (myStatus?.user?.status === "WORKING") {
