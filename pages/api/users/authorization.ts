@@ -35,16 +35,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   req.session.user = {
     id: auth.userId,
-    role: auth.user.role,
   };
+
   await req.session.save();
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      user: { role: auth.user.role, status: auth.user.status },
-    });
+  res.status(200).json({
+    success: true,
+    user: { role: auth.user.role, status: auth.user.status },
+  });
 };
 
 export default withCookie(

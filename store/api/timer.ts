@@ -24,6 +24,7 @@ export const startTimer = createAsyncThunk(
 );
 
 type EndTimerArgsType = { startTime: string; endTime: string };
+
 export const endTimer = createAsyncThunk(
   "timer/end",
   async ({ startTime, endTime }: EndTimerArgsType, api) => {

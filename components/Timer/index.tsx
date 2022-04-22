@@ -4,10 +4,12 @@ import TimeLine from "./TimeLine";
 import StatusButtons from "./StatusButtons";
 import StatusMessages from "./StatusMessages";
 import useModal from "@libs/client/useModal";
+import { getHourMinuteSecond } from "@libs/client/utils";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { startTimer } from "@store/api/timer";
+import { useGetMeStatusQuery } from "@store/services/user";
 import { useGetRecordByDateQuery } from "@store/services/timer";
-import { motion, AnimatePresence } from "framer-motion";
+import { setStartTime, setTimerStatus } from "@store/reducer/timerReducer";
 
 interface props {
   children: React.ReactNode;
@@ -32,6 +34,24 @@ const Timer: NextPage<props> = ({ children }) => {
     dispatch(startTimer(now));
     refetch();
   }, [timeoutStatus, dispatch, onShowModal, refetch]);
+
+  const { data: myStatus } = useGetMeStatusQuery("");
+  const { data: workTime } = useGetRecordByDateQuery("");
+
+  useEffect(() => {
+    if (myStatus?.user?.status === "WORKING") {
+      if (!workTime?.times?.[0].start) return;
+      dispatch(setStartTime(workTime.times[0].start.toString()));
+      dispatch(setTimerStatus("end"));
+      const duration =
+        new Date().getTime() -
+        new Date(workTime.times[0].start.toString()).getTime();
+      const [h, m, s] = getHourMinuteSecond(duration);
+      setHour(+h);
+      setMinute(+m);
+      setSecond(+s);
+    }
+  }, [myStatus]);
 
   useEffect(() => {
     if (timeoutStatus === "start") {
@@ -87,10 +107,10 @@ const Timer: NextPage<props> = ({ children }) => {
   return (
     <div className="grid grid-rows-[2fr,minmax(6rem,1fr),3fr] place-content-center">
       <StatusButtons onClickTimerButton={onClickTimerButton} />
-      <motion.div className="relative -top-20 flex flex-col items-center justify-center self-start">
+      <div className="relative -top-20 flex flex-col items-center justify-center self-start">
         <TimeLine hour={hour} minute={minute} second={second} />
         <StatusMessages />
-      </motion.div>
+      </div>
       <div className="relative -mt-20">{children}</div>
     </div>
   );

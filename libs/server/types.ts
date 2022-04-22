@@ -22,7 +22,7 @@ export type UserRecordType = {
 } & CommonResType &
   Partial<Users>;
 
-type UserMe = Omit<Users, "createdAt" | "updatedAt">;
+type UserMe = Partial<Omit<Users, "createdAt" | "updatedAt">>;
 export type MeType = {
   user?: UserMe;
 } & CommonResType;
