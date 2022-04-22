@@ -31,10 +31,10 @@ const TimeLine: NextPage<props> = ({ hour, minute, second }) => {
     <AnimatePresence onExitComplete={() => setIsStatusChangingHandler(false)}>
       {timeoutStatus === "end" && (
         <motion.h2
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1 }}
-          exit={{ scaleY: 0 }}
-          className="relative -top-10 text-4xl origin-bottom"
+          initial={{ scaleY: 0, translateY: 20 }}
+          animate={{ scaleY: 1, translateY: 10 }}
+          exit={{ scaleY: 0, translateY: 20 }}
+          className="relative mb-2 text-4xl origin-bottom"
         >
           <div className="w-56 grid grid-cols-8 place-items-center text-gray-600">
             <span className="col-span-2">{getStringTime(hour)}</span>

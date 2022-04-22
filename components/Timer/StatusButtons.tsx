@@ -12,8 +12,8 @@ const StatusButtons: NextPage<props> = ({ onClickTimerButton }) => {
   return (
     <div
       className={joinStyleClass(
-        "flex items-center justify-center w-44 aspect-square mx-auto bg-green-500 rounded-full transition shadow-md",
-        timeoutStatus === "end" ? "-translate-y-10" : ""
+        "flex items-center justify-center w-44 aspect-square mx-auto bg-green-500 rounded-full shadow-md transition duration-150 ease-out",
+        timeoutStatus === "end" ? "-translate-y-16" : ""
       )}
     >
       <StatusButton onClickTimerButton={onClickTimerButton} />

@@ -7,6 +7,7 @@ import useModal from "@libs/client/useModal";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { startTimer } from "@store/api/timer";
 import { useGetRecordByDateQuery } from "@store/services/timer";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface props {
   children: React.ReactNode;
@@ -31,6 +32,14 @@ const Timer: NextPage<props> = ({ children }) => {
     dispatch(startTimer(now));
     refetch();
   }, [timeoutStatus, dispatch, onShowModal, refetch]);
+
+  useEffect(() => {
+    if (timeoutStatus === "start") {
+      setHour(0);
+      setMinute(0);
+      setSecond(0);
+    }
+  }, [timeoutStatus]);
 
   useEffect(() => {
     if (timeoutStatus === "end") {
@@ -76,13 +85,13 @@ const Timer: NextPage<props> = ({ children }) => {
   }, [hourTrigger, setHour]);
 
   return (
-    <div className="grid auto-rows-min place-content-center gap-5">
+    <div className="grid grid-rows-[2fr,minmax(6rem,1fr),3fr] place-content-center">
       <StatusButtons onClickTimerButton={onClickTimerButton} />
-      <div className="flex flex-col items-center justify-center self-start">
+      <motion.div className="relative -top-20 flex flex-col items-center justify-center self-start">
         <TimeLine hour={hour} minute={minute} second={second} />
         <StatusMessages />
-      </div>
-      <div className="row-span-2">{children}</div>
+      </motion.div>
+      <div className="relative -mt-20">{children}</div>
     </div>
   );
 };

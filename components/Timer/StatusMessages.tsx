@@ -17,7 +17,7 @@ const StatusMessages = () => {
       )}
 
       {timeoutStatus === "end" && (
-        <h2 className="text-gray-600">
+        <h2 className="my-3 text-gray-600">
           초과근무가 {format(startTime, "HH:mm")}에 시작되었습니다.
         </h2>
       )}
