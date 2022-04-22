@@ -9,9 +9,9 @@ import useSWR from "swr";
 import { TimeType } from "@libs/server/types";
 
 const options: RecordRowHeaderType = {
-  start: { isSort: false, colSpan: 1 },
-  end: { isSort: false, colSpan: 1 },
-  duration: { isSort: false, colSpan: 1 },
+  start: { colSpan: 1 },
+  end: { colSpan: 1 },
+  duration: { colSpan: 1 },
 };
 
 const me = {

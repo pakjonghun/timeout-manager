@@ -8,7 +8,7 @@ export const getMeApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/" }),
   endpoints: (builder) => ({
     getMeStatus: builder.query<MeType, string>({
-      query: () => "api/users/me?statue=1",
+      query: (query) => `api/users/me?${query}`,
     }),
   }),
 });

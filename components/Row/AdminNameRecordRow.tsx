@@ -62,7 +62,6 @@ const AdminNameRecordRow: NextPage<props> = ({
         />
       </label>
       <span className="col-span-2 font-md">{user?.name || ""}</span>
-
       <span className="col-span-2 font-md">
         {format(new Date(start), "HH:mm")}
       </span>

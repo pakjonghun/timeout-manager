@@ -26,7 +26,7 @@ const Timer: NextPage<props> = ({ children }) => {
 
   const { onShowModal } = useModal("confirmTimer");
   const { refetch } = useGetRecordByDateQuery("");
-  const { data: myStatus } = useGetMeStatusQuery("");
+  const { data: myStatus } = useGetMeStatusQuery("status=1");
   const { data: workTime } = useGetRecordByDateQuery("");
   const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
 

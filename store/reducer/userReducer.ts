@@ -15,8 +15,8 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, { payload }: PayloadAction<IUserState>) => {
-      state = payload;
+    login: (_, { payload }: PayloadAction<IUserState>) => {
+      return payload;
     },
     logout: () => {
       return initialState;

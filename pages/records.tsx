@@ -22,172 +22,145 @@ import {
 } from "@libs/server/types";
 import useSWR from "swr";
 import { toast } from "react-toastify";
+import { useGetRecordsByPageQuery } from "@store/services/record";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 
 const Record = () => {
-  const initAdminThead: AdminRecordHeaderType = useMemo(
-    () => ({
-      ["#"]: { colSpan: 1 },
-      name: { sort: null, colSpan: 2 },
-      start: { sort: null, colSpan: 2 },
-      end: { sort: null, colSpan: 2 },
-      duration: { sort: null, colSpan: 2 },
-    }),
-    []
-  );
+  // const [recordUrl, setRecordUrl] = useState("/api/records?page=1");
+  // const [selectList, setSelectList] = useState<string[]>([]);
+  // const [isAllSelect, setIsAllSelect] = useState(false);
+  // const [editModalData, setEditModalData] = useState<UserRecordWithUser | null>(
+  //   null
+  // );
 
-  const initUserThead: UserRecordHeaderType = useMemo(
-    () => ({
-      createdAt: { sort: null, colSpan: 3 },
-      start: { sort: null, colSpan: 2 },
-      end: { sort: null, colSpan: 2 },
-      duration: { sort: null, colSpan: 2 },
-    }),
-    []
-  );
+  // const { page, onNextPage, onPrePage } = usePagnation(recordUrl);
+  // const { curSort, sorts, onSort, setSorts } = useSort(initUserThead, [
+  //   "createdAt",
+  //   "desc",
+  // ]);
 
-  const [recordUrl, setRecordUrl] = useState("/api/records?page=1");
-  const [selectList, setSelectList] = useState<string[]>([]);
-  const [isAllSelect, setIsAllSelect] = useState(false);
-  const [editModalData, setEditModalData] = useState<UserRecordWithUser | null>(
-    null
-  );
+  // const [isShowEditModal, onEditModalClose, setIsShowEditModal] = useModal();
+  // const [isShowDeleteModal, onDeleteModalClose, setIsShowDeleteModal] =
+  //   useModal();
 
-  const { page, onNextPage, onPrePage } = usePagnation(recordUrl);
-  const { curSort, sorts, onSort, setSorts } = useSort(initUserThead, [
-    "createdAt",
-    "desc",
-  ]);
+  // const { data: me } = useSWR<MeType>("/api/users/me");
+  // const { data: records, mutate: mutateRecords } =
+  //   useSWR<UserRecordType>(recordUrl);
 
-  const [isShowEditModal, onEditModalClose, setIsShowEditModal] = useModal();
-  const [isShowDeleteModal, onDeleteModalClose, setIsShowDeleteModal] =
-    useModal();
+  // const [deleteRecords, { isLoading: isDeleted }] = useMutation<CommonResType>({
+  //   method: "DELETE",
+  //   url: "/api/records",
+  // });
 
-  const { data: me } = useSWR<MeType>("/api/users/me");
-  const { data: records, mutate: mutateRecords } =
-    useSWR<UserRecordType>(recordUrl);
+  // const [updateRecords] = useMutation<CommonResType>({
+  //   method: "PATCH",
+  //   url: "/api/records",
+  // });
 
-  const [deleteRecords, { isLoading: isDeleted }] = useMutation<CommonResType>({
-    method: "DELETE",
-    url: "/api/records",
-  });
+  // useEffect(() => {
+  //   const init = me?.user?.role === "ADMIN" ? initAdminThead : initUserThead;
+  //   setSorts(init);
+  // }, [me]);
 
-  const [updateRecords] = useMutation<CommonResType>({
-    method: "PATCH",
-    url: "/api/records",
-  });
+  // useEffect(() => {
+  //   const url = new URLSearchParams();
+  //   url.append("page", page + "");
+  //   url.append(curSort[0], curSort[1]);
+  //   setRecordUrl(`/api/records?${url.toString()}`);
+  // }, [page, curSort]);
 
-  useEffect(() => {
-    const init = me?.user?.role === "ADMIN" ? initAdminThead : initUserThead;
-    setSorts(init);
-  }, [me]);
+  // const onRecord = useCallback(
+  //   (event: React.MouseEvent, data: UserRecordWithUser) => {
+  //     const target = event.target as HTMLElement;
+  //     if (target.id) return;
+  //     setEditModalData(data);
+  //     setIsShowEditModal(true);
+  //   },
+  //   [setEditModalData, setIsShowEditModal]
+  // );
 
-  useEffect(() => {
-    const url = new URLSearchParams();
-    url.append("page", page + "");
-    url.append(curSort[0], curSort[1]);
-    setRecordUrl(`/api/records?${url.toString()}`);
-  }, [page, curSort]);
+  // const onSelect = useCallback(
+  //   (event: React.FormEvent<HTMLElement>) => {
+  //     const value = (event.target as HTMLInputElement).value;
+  //     const isInclude = selectList.includes(value);
+  //     setSelectList(
+  //       isInclude
+  //         ? selectList.filter((v) => v !== value)
+  //         : [...selectList, value]
+  //     );
+  //   },
+  //   [selectList]
+  // );
 
-  const onRecord = useCallback(
-    (event: React.MouseEvent, data: UserRecordWithUser) => {
-      const target = event.target as HTMLElement;
-      if (target.id) return;
-      setEditModalData(data);
-      setIsShowEditModal(true);
-    },
-    [setEditModalData, setIsShowEditModal]
-  );
+  // const onSelectAll = useCallback(() => {
+  //   if (!records?.records) return;
 
-  const onSelect = useCallback(
-    (event: React.FormEvent<HTMLElement>) => {
-      const value = (event.target as HTMLInputElement).value;
-      const isInclude = selectList.includes(value);
-      setSelectList(
-        isInclude
-          ? selectList.filter((v) => v !== value)
-          : [...selectList, value]
-      );
-    },
-    [selectList]
-  );
+  //   if (isAllSelect) {
+  //     setIsAllSelect(false);
+  //     setSelectList([]);
+  //   } else {
+  //     const ids = records.records.map((v) => v.id + "");
+  //     setIsAllSelect(true);
+  //     setSelectList(ids);
+  //   }
+  // }, [records, isAllSelect]);
 
-  const onSelectAll = useCallback(() => {
-    if (!records?.records) return;
+  // const onConfirmDelete = useCallback(() => {
+  //   deleteRecords({ ids: selectList }, () => {
+  //     mutateRecords();
+  //     setSelectList([]);
+  //     setIsShowDeleteModal(false);
+  //     setIsAllSelect(false);
+  //   });
+  // }, [selectList, deleteRecords, mutateRecords, setIsShowDeleteModal]);
 
-    if (isAllSelect) {
-      setIsAllSelect(false);
-      setSelectList([]);
-    } else {
-      const ids = records.records.map((v) => v.id + "");
-      setIsAllSelect(true);
-      setSelectList(ids);
-    }
-  }, [records, isAllSelect]);
+  // const onDeleteModalShow = useCallback(() => {
+  //   if (!selectList.length) return toast.warn("선택된 항목이 없습니다.");
+  //   setIsShowDeleteModal(true);
+  // }, [selectList, setIsShowDeleteModal]);
 
-  const onConfirmDelete = useCallback(() => {
-    deleteRecords({ ids: selectList }, () => {
-      mutateRecords();
-      setSelectList([]);
-      setIsShowDeleteModal(false);
-      setIsAllSelect(false);
-    });
-  }, [selectList, deleteRecords, mutateRecords, setIsShowDeleteModal]);
-
-  const onDeleteModalShow = useCallback(() => {
-    if (!selectList.length) return toast.warn("선택된 항목이 없습니다.");
-    setIsShowDeleteModal(true);
-  }, [selectList, setIsShowDeleteModal]);
-
+  const userRole = useAppSelector((state) => state.user.role);
   return (
     <Layout title="초과근무 내역" canGoBack={false}>
-      <EditRecordModal
+      {/* <EditRecordModal
         data={editModalData}
         recordUrl={recordUrl}
         isShow={isShowEditModal}
         setIsShowEditModal={setIsShowEditModal}
         updateRecords={updateRecords}
         onClose={onEditModalClose}
-      />
+      /> */}
 
-      <RecordDeleteModal
+      {/* <RecordDeleteModal
         onClose={onDeleteModalClose}
         showDeleteModal={isShowDeleteModal}
         selectedDataCount={selectList.length}
         onConfirm={onConfirmDelete}
-      />
+      /> */}
 
-      <div
+      {/* <div
         className={joinStyleClass(
           "grid w-full mt-5",
-          me?.user?.role === "ADMIN"
+          userRole === "ADMIN"
             ? "grid-rows-[5vh,67vh,3vh]"
             : "grid-rows-[70vh,3vh]"
         )}
-      >
-        <SubMenu
+      > */}
+      {/* <SubMenu
           isDeleted={isDeleted}
           onDeleteModalShow={onDeleteModalShow}
           recordUrl={recordUrl}
-        />
+        /> */}
 
-        <AdminRecordTable
-          recordUrl={recordUrl}
-          sorts={sorts}
-          isAllSelect={isAllSelect}
-          selectList={selectList}
-          onSort={onSort}
-          onSelectAll={onSelectAll}
-          onRecord={onRecord}
-          onSelect={onSelect}
-        />
+      <AdminRecordTable />
 
-        <PageNationButtons
+      {/* <PageNationButtons
           page={page}
           recordUrl={recordUrl}
           onNextPage={onNextPage}
           onPrePage={onPrePage}
-        />
-      </div>
+        /> */}
+      {/* </div> */}
     </Layout>
   );
 };

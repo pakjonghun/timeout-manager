@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { AuthType } from "@libs/server/types";
 import { useAppDispatch } from "@libs/client/useRedux";
-import { setRole, setStatus } from "@store/reducer/userReducer";
+import { login, setRole, setStatus } from "@store/reducer/userReducer";
 
 interface form {
   authNumber: number;
@@ -57,8 +57,7 @@ const Auth = () => {
       }
       const curValue = email ? { email, authNumber } : { phone, authNumber };
       mutation(curValue, (data: AuthType) => {
-        dispatch(setRole(data.user.role));
-        dispatch(setStatus(data.user.status));
+        dispatch(login(data.user));
       });
     },
     [router, email, phone, mutation, dispatch]

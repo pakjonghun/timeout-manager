@@ -35,8 +35,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   req.session.user = {
     id: auth.userId,
+    role: auth.user.role,
   };
-
   await req.session.save();
 
   res.status(200).json({

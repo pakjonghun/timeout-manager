@@ -1,43 +1,53 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { SortType } from "@libs/server/types";
-import { RowOptionType } from "./types/dataTypes";
+import { useAppSelector } from "@libs/client/useRedux";
+import { AdminRecordHeaderType, UserRecordHeaderType } from "./types/dataTypes";
+import { sort } from "@store/reducer/userRecordReducer";
+import { sort as adminSort } from "@store/reducer/adminRecordReducer";
+import { useDispatch } from "react-redux";
 
-type SortOptions = {
-  [key: string]: RowOptionType;
-};
-
-type CurSort<K extends string> = [K, SortType];
-
-const useSort = <T extends SortOptions>(
-  initOption: T,
-  initSort: CurSort<string>
-) => {
-  const [sorts, setSorts] = useState<T>(initOption);
-  const [curSort, setCurSort] = useState<CurSort<string>>(initSort);
+const useSort = () => {
+  const dispatch = useDispatch();
+  const userRecordThead = useAppSelector((state) => state.userRecord.thead);
+  const adminRecordThead = useAppSelector((state) => state.adminRecord.thead);
+  const userRole = useAppSelector((state) => state.user.role);
 
   const onSort = useCallback(
     (event: React.FormEvent<HTMLElement>) => {
       const target = event.target as HTMLInputElement;
-      const value = target.value as keyof typeof initOption;
       if (target.id === "allSelectBoxLabel") return;
-
-      const preSort = sorts[value]?.sort;
-      if (preSort === undefined) return;
 
       const sortStatus = {
         asc: "desc",
         desc: "asc",
       };
 
-      if (preSort === undefined) return;
-      const sort = preSort === null ? "asc" : sortStatus[preSort];
-      setSorts({ ...sorts, [value]: { ...sorts[value], sort } });
-      setCurSort([value + "", sort as SortType]);
+      switch (userRole) {
+        case "USER":
+          const value = target.value as keyof UserRecordHeaderType;
+          const preSort = userRecordThead[value]?.sort;
+          if (!preSort) return;
+          const curSort =
+            preSort === null ? "asc" : (sortStatus[preSort] as SortType);
+          dispatch(sort({ title: value, sort: curSort }));
+          break;
+
+        default:
+          const adminValue = target.value as keyof AdminRecordHeaderType;
+          const adminPreSort = adminRecordThead[adminValue]?.sort;
+          if (adminPreSort === undefined) return;
+          const adminCurSort =
+            adminPreSort === null
+              ? "asc"
+              : (sortStatus[adminPreSort] as SortType);
+          dispatch(adminSort({ title: adminValue, sort: adminCurSort }));
+          break;
+      }
     },
-    [sorts]
+    [userRole, adminRecordThead, userRecordThead, dispatch]
   );
 
-  return { sorts, curSort, onSort, setSorts };
+  return onSort;
 };
 
 export default useSort;
