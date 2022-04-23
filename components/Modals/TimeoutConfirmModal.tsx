@@ -2,11 +2,8 @@ import Modal from "@components/Modal";
 import ModalTitle from "@components/ModalTitle";
 import ModalButtons from "@components/Modals/ModalButtons";
 import { AnimatePresence } from "framer-motion";
-import { getDuration } from "@libs/client/utils";
 import useModal from "@libs/client/useModal";
 import { NextPage } from "next";
-import { toast } from "react-toastify";
-import { useGetRecordByDateQuery } from "@store/services/timer";
 
 interface props {
   title: string;
@@ -20,7 +17,6 @@ const TimeoutConfirmModal: NextPage<props> = ({
   onConfirm,
 }) => {
   const { isShowModal, onHideModal } = useModal("confirmTimer");
-
   return (
     <AnimatePresence>
       {isShowModal && (
@@ -38,7 +34,6 @@ const TimeoutConfirmModal: NextPage<props> = ({
               </svg>
             }
           />
-
           <main className="mt-7 space-y-8">
             <h4 className="mb-1 font-medium text-md text-gray-600">{title}</h4>
             <span className="text-gray-400 text-sm">{message}</span>

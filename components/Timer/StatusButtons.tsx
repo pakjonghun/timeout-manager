@@ -9,7 +9,7 @@ interface props {
 }
 
 const StatusButtons: NextPage<props> = ({ onClickTimerButton }) => {
-  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
+  const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
   return (
     <div
       className={joinStyleClass(

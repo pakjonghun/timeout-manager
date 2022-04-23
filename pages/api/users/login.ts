@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import withMethod from "@libs/server/withMethod";
 import client from "@libs/server/client";
-import { CommonResponse } from "@libs/server/types/dateTypes";
+import { CommonResponse } from "@libs/server/types/dataTypes";
 
 const handler = async (
   req: NextApiRequest,

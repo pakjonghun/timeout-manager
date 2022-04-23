@@ -4,8 +4,8 @@ import { useAppSelector } from "@libs/client/useRedux";
 import { format } from "date-fns";
 
 const StatusMessages = () => {
-  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
-  const startTime = useAppSelector((state) => state.timer.startTime);
+  const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
+  const startTime = useAppSelector((state) => state.workTime.startTime);
   const canStartTime = getCanStartTime();
 
   if (!startTime) return null;

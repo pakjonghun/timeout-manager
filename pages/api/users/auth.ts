@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CommonResponse } from "./../../../libs/server/types/dateTypes";
+import { CommonResponse } from "../../../libs/server/types/dataTypes";
 import client from "@libs/server/client";
 import withMethod from "@libs/server/withMethod";
 import withCookie from "@libs/server/withCookie";

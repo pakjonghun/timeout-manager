@@ -5,9 +5,10 @@ import StatusButtons from "./StatusButtons";
 import StatusMessages from "./StatusMessages";
 import useModal from "@libs/client/useModal";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
-import { startTimer } from "@store/api/timer";
 import useTimeController from "./controllers/timeController";
-import { useGetRecordByDateQuery } from "@store/services/timer";
+import { setStartTime, startTimer } from "@store/reducer/workTime";
+import { useStartWorkMutation } from "@store/services/workTime";
+import { toast } from "react-toastify";
 
 interface props {
   children: React.ReactNode;
@@ -17,20 +18,24 @@ const Timer: NextPage<props> = ({ children }) => {
   const dispatch = useAppDispatch();
 
   const [hour, minute, second] = useTimeController();
-  const { refetch } = useGetRecordByDateQuery("");
+
   const { onShowModal } = useModal("confirmTimer");
-  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
+  const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
+  const [startWorkMutation, { isSuccess, isError, data }] =
+    useStartWorkMutation();
 
   useEffect(() => {
-    refetch();
-  }, [timeoutStatus, refetch]);
+    if (isError) toast.error("초과근무 시작을 실패했습니다..");
+    if (isSuccess && data?.workTime?.start) {
+      dispatch(setStartTime(data.workTime.start.toString()));
+    }
+  }, [isSuccess, isError, dispatch]);
 
   const onClickTimerButton = useCallback(() => {
-    if (timeoutStatus === "end")
-      return onShowModal(() => console.log("onshowmodal"));
-    const now = new Date().toString();
-    dispatch(startTimer(now));
-  }, [timeoutStatus, dispatch, onShowModal]);
+    if (timeoutStatus === "end") return onShowModal();
+    dispatch(startTimer());
+    startWorkMutation({ start: new Date() });
+  }, [timeoutStatus, startWorkMutation, dispatch, onShowModal]);
 
   return (
     <div className="grid grid-rows-[2fr,minmax(6rem,1fr),3fr] place-content-center">

@@ -33,7 +33,7 @@ const withMethod =
 
       return handler(req, res);
     } catch (error) {
-      return res.status(405).json({ success: false });
+      return res.status(500).json({ success: false });
     }
   };
 

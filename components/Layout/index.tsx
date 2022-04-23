@@ -8,8 +8,8 @@ import SideMenus from "@components/Layout/SideMenus";
 import MainNavMenus from "@components/Layout/MainNavMenus";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@libs/client/useRedux";
-import { useGetMeStatusQuery } from "@store/services/user";
-import { setRole, setStatus } from "@store/reducer/userReducer";
+// import { useGetMeStatusQuery } from "@store/services/user";
+// import { setRole, setStatus } from "@store/reducer/userReducer";
 
 interface props {
   children: React.ReactNode;
@@ -26,25 +26,25 @@ const Layout: NextPage<props> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { data: me, refetch } = useGetMeStatusQuery("status=1");
+  // const { data: me, refetch } = useGetMeStatusQuery("status=1");
 
-  useEffect(() => {
-    if (me !== undefined && !me.success) {
-      toast.error("잘못된 유저 정보 입니다.");
-      router.push("/login");
-    }
+  // useEffect(() => {
+  //   if (me !== undefined && !me.success) {
+  //     toast.error("잘못된 유저 정보 입니다.");
+  //     router.push("/login");
+  //   }
 
-    if (me?.user?.status) dispatch(setStatus(me.user.status));
-    if (me?.user?.role) dispatch(setRole(me.user.role));
-  }, [me]);
+  //   if (me?.user?.status) dispatch(setStatus(me.user.status));
+  //   if (me?.user?.role) dispatch(setRole(me.user.role));
+  // }, [me]);
 
-  if (me === undefined || !me?.success) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin classes="w-28 h-28 fill-gray-200" />
-      </div>
-    );
-  }
+  // if (me === undefined || !me?.success) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <Spin classes="w-28 h-28 fill-gray-200" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="max-w-screen-lg h-screen min-h-max mx-auto">

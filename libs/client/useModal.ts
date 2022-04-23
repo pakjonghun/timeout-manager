@@ -1,11 +1,7 @@
 import { useCallback } from "react";
 import { useAppDispatch } from "@libs/client/useRedux";
 import { useAppSelector } from "./useRedux";
-import {
-  hideModal,
-  ModalType,
-  showModal,
-} from "./../../store/reducer/modalReducer";
+import { hideModal, ModalType, showModal } from "./../../store/reducer/modal";
 
 type OnHideModalType = (
   event?: React.MouseEvent<HTMLElement>,

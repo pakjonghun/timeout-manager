@@ -7,7 +7,7 @@ import Switch from "@components/Switch";
 import PublicTitle from "@components/PublicTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import LoadingButton from "@components/LoadingButton";
-import { LoginType } from "@libs/client/types";
+import { Login } from "@libs/client/types";
 import { useForm } from "react-hook-form";
 import { useLoginMutation } from "@store/services/user";
 import { toast } from "react-toastify";
@@ -23,7 +23,7 @@ export interface emailForm {
 const Login = () => {
   const router = useRouter();
   const { email, phone } = router.query;
-  const [loginType, setLoginType] = useState<LoginType>("phone");
+  const [loginType, setLoginType] = useState<Login>("phone");
   const [loginMutate, { isLoading, isSuccess, isError }] = useLoginMutation();
 
   const {

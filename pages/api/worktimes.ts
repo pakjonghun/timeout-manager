@@ -2,15 +2,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/server/client";
 import withMethod from "@libs/server/withMethod";
 import withCookie from "@libs/server/withCookie";
-import { TimeType } from "@libs/server/types";
 import { getCanStartTime } from "@libs/server/utils";
+import { WorkTimeResponse } from "@libs/server/types/dataTypes";
 
 type BodyType = {
   start: string;
   end?: string;
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<TimeType>) => {
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<WorkTimeResponse>
+) => {
   if (req.method === "POST") {
     const { start, end } = req.body as BodyType;
     if (!end && start) {
@@ -23,35 +26,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<TimeType>) => {
         },
       });
 
-      const time = await client.workTimes.create({
+      const workTime = await client.workTimes.create({
         data: {
           user: {
             connect: {
               id: req.session.user!.id,
             },
           },
-          start,
+          start: new Date(start.toString()),
         },
       });
 
-      return res.status(201).json({ success: true, time: time });
+      return res.status(201).json({ success: true, workTime });
     }
 
     if (start && end) {
       const isTimeExist = await client.workTimes.findFirst({
         where: {
           userId: req.session.user!.id,
-          start,
-        },
-        select: {
-          id: true,
-          start: true,
+          start: new Date(start.toString()),
         },
       });
 
       if (!isTimeExist) return res.status(400).json({ success: false });
 
-      const time = await client.workTimes.update({
+      const workTime = await client.workTimes.update({
         where: {
           id: isTimeExist.id,
         },
@@ -71,12 +70,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<TimeType>) => {
         },
       });
 
-      return res.status(201).json({ success: true, time });
+      return res.status(201).json({ success: true, workTime });
     }
+
+    return res.json({ success: false });
   }
 
   if (req.method === "GET") {
-    const times = await client.workTimes.findMany({
+    const workTimes = await client.workTimes.findMany({
       where: {
         userId: req.session.user!.id,
         start: {
@@ -94,7 +95,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<TimeType>) => {
       },
     });
 
-    res.json({ success: true, times });
+    return res.json({ success: true, workTimes });
   }
 };
 

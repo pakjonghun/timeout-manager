@@ -1,10 +1,14 @@
-import { CommonResponse } from "@libs/server/types/dateTypes";
+import { endTimer } from "@store/reducer/workTime";
+import { setStartTime, startTimer } from "@store/reducer/workTime";
+import { MyStatusResponse } from "./../../libs/server/types/dataTypes";
+import { CommonResponse } from "@libs/server/types/dataTypes";
 import {
   LoginRequest,
   AuthRequest,
   JoinRequest,
 } from "./../../libs/client/types/dataTypes";
 import { api } from "./index";
+import { Users } from "@prisma/client";
 export const user = api.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation<CommonResponse, LoginRequest>({
@@ -28,7 +32,55 @@ export const user = api.injectEndpoints({
         body,
       }),
     }),
+    updateProfile: build.mutation<
+      CommonResponse,
+      Partial<Users> & Pick<Users, "id">
+    >({
+      query: (body) => ({
+        body,
+        method: "PATCH",
+        url: "users",
+      }),
+    }),
+    getStatus: build.query<MyStatusResponse, void>({
+      queryFn: async (_, api, __, baseQuery) => {
+        try {
+          const result = await baseQuery(
+            "http://localhost:3000/api/users/me?status=1"
+          );
+
+          const { user } = result.data as MyStatusResponse;
+          switch (user?.status) {
+            case "WORKING":
+              if (user?.startTime) {
+                api.dispatch(startTimer());
+                api.dispatch(setStartTime(user.startTime));
+              } else {
+                return { data: { success: false } };
+              }
+              break;
+            case "NOTWORKING":
+              api.dispatch(endTimer());
+              api.dispatch(setStartTime(""));
+              break;
+            default:
+              break;
+          }
+
+          return { data: { success: true } };
+        } catch (err) {
+          return { data: { success: false } };
+        }
+      },
+      providesTags: ["MyStatus"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useAuthMutation, useJoinMutation } = user;
+export const {
+  useLoginMutation,
+  useAuthMutation,
+  useJoinMutation,
+  useGetStatusQuery,
+  useUpdateProfileMutation,
+} = user;

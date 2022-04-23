@@ -1,4 +1,3 @@
-import { MethodsType } from "@libs/server/types";
 import { startOfMonth, startOfWeek, getWeeksInMonth, min } from "date-fns";
 
 export const joinStyleClass = (...args: string[]) => args.join(" ");
@@ -65,13 +64,19 @@ export const getDuration = (duration: number) => {
   return `${HH}:${mm}`;
 };
 
-const makeBody = (data: any) => JSON.stringify(data);
+export const tagMaker = <R extends { id: string | number }[], T extends string>(
+  resultsWithIds: R | undefined,
+  type: T
+) =>
+  resultsWithIds
+    ? [
+        ...resultsWithIds.map(({ id }) => ({ type, id })),
+        { type: type as const, id: "LIST" },
+      ]
+    : [{ type, id: "LIST" }];
 
-type DateFetchArgType = { url: string; body: any; method?: MethodsType };
-export const dataFetch = ({ url, body, method = "POST" }: DateFetchArgType) => {
-  return fetch(url, {
-    method: method,
-    headers: { "Content-Type": "application/json" },
-    body: makeBody(body),
-  });
+export const queryMaker = (args: { key: string; value: string | number }[]) => {
+  const url = new URLSearchParams();
+  args.forEach(({ key, value }) => url.append(key, value + ""));
+  return url.toString();
 };

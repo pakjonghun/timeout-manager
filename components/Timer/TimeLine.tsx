@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { NextPage } from "next";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
-import { setIsStatusChanging } from "@store/reducer/timerReducer";
 import { motion, AnimatePresence } from "framer-motion";
 import TimeIndicator from "./TimeIndicator";
+import { setIsStatusChanging } from "@store/reducer/workTime";
 
 interface props {
   hour: number;
@@ -12,7 +12,7 @@ interface props {
 }
 
 const TimeLine: NextPage<props> = ({ hour, minute, second }) => {
-  const timeoutStatus = useAppSelector((state) => state.timer.timeoutStatus);
+  const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
   const dispatch = useAppDispatch();
 
   const getStringTime = useCallback((time: number) => {
