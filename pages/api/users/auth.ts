@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { CommonResponse } from "./../../../libs/server/types/dateTypes";
 import client from "@libs/server/client";
 import withMethod from "@libs/server/withMethod";
 import withCookie from "@libs/server/withCookie";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<CommonResponse>
+) => {
   const { authNumber, phone, email } = req.body;
   const auth = await client.auths.findFirst({
     where: {
@@ -41,7 +45,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.status(200).json({
     success: true,
-    user: { role: auth.user.role, status: auth.user.status },
   });
 };
 

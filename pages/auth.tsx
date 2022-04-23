@@ -5,26 +5,29 @@ import Input from "@components/Input";
 import PublicTitle from "@components/PublicTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import LoadingButton from "@components/LoadingButton";
-import useMutation from "@libs/client/useMutation";
-
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { AuthType } from "@libs/server/types";
-import { useAppDispatch } from "@libs/client/useRedux";
-import { login, setRole, setStatus } from "@store/reducer/userReducer";
+import { useAuthMutation } from "@store/services/user";
 
 interface form {
   authNumber: number;
 }
 
 const Auth = () => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const { email, phone } = router.query;
+  const [authMutate, { isLoading, isSuccess, isError }] = useAuthMutation();
 
-  const [mutation, { data, isLoading }] = useMutation<AuthType>({
-    url: "/api/users/authorization",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<form>({ mode: "all" });
+
+  useEffect(() => {
+    if (isSuccess) router.push("/");
+    if (isError) toast.error("인증이 실패했습니다.");
+  }, [isSuccess, isError, router]);
 
   useEffect(() => {
     if (!email && !phone) {
@@ -32,19 +35,6 @@ const Auth = () => {
       router.push("/login");
     }
   }, [email, phone, router]);
-
-  useEffect(() => {
-    if (data !== null && data.success) router.push("/");
-    if (data !== null && !data.success) {
-      toast.error("인증번호가 올바르지 않습니다.");
-    }
-  }, [data, router]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<form>({ mode: "all" });
 
   const onValid = useCallback(
     ({ authNumber }: form) => {
@@ -55,12 +45,14 @@ const Auth = () => {
         }, 1000);
         return;
       }
-      const curValue = email ? { email, authNumber } : { phone, authNumber };
-      mutation(curValue, (data: AuthType) => {
-        dispatch(login(data.user));
-      });
+      const curValue = email
+        ? { email: email.toString(), authNumber }
+        : phone && { phone: phone.toString(), authNumber };
+
+      if (!curValue) return toast.error("인증이 실패했습니다.");
+      authMutate(curValue);
     },
-    [router, email, phone, mutation, dispatch]
+    [router, email, phone, authMutate]
   );
 
   return (

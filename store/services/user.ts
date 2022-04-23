@@ -1,16 +1,34 @@
-import { MeType, TimeType } from "@libs/server/types";
-
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export const USER_MY_STATUS_KEY = "getMeApi";
-export const getMeApi = createApi({
-  reducerPath: "getMeApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/" }),
-  endpoints: (builder) => ({
-    getMeStatus: builder.query<MeType, string>({
-      query: (query) => `api/users/me?${query}`,
+import { CommonResponse } from "@libs/server/types/dateTypes";
+import {
+  LoginRequest,
+  AuthRequest,
+  JoinRequest,
+} from "./../../libs/client/types/dataTypes";
+import { api } from "./index";
+export const user = api.injectEndpoints({
+  endpoints: (build) => ({
+    login: build.mutation<CommonResponse, LoginRequest>({
+      query: (body) => ({
+        url: "users/login",
+        method: "POST",
+        body,
+      }),
+    }),
+    auth: build.mutation<CommonResponse, AuthRequest>({
+      query: (body) => ({
+        url: "users/auth",
+        method: "POST",
+        body,
+      }),
+    }),
+    join: build.mutation<CommonResponse, JoinRequest>({
+      query: (body) => ({
+        url: "users/join",
+        method: "POST",
+        body,
+      }),
     }),
   }),
 });
 
-export const { useGetMeStatusQuery } = getMeApi;
+export const { useLoginMutation, useAuthMutation, useJoinMutation } = user;

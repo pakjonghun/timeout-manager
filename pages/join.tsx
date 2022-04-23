@@ -1,12 +1,13 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import Title from "@components/Title";
 import Input from "@components/Input";
 import PublicTitle from "@components/PublicTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import LoadingButton from "@components/LoadingButton";
-import useMutation from "@libs/client/useMutation";
 import { useForm } from "react-hook-form";
+import { useJoinMutation } from "@store/services/user";
+import { toast } from "react-toastify";
 
 interface form {
   name: string;
@@ -16,28 +17,33 @@ interface form {
 
 const Join = () => {
   const router = useRouter();
+  const [joinMutate, { isLoading, isSuccess, isError }] = useJoinMutation();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<form>({ mode: "all", defaultValues: { phone: "010-" } });
 
-  const [mutation, { isLoading }] = useMutation({ url: "/api/users/join" });
+  useEffect(() => {
+    if (isSuccess)
+      router.push(
+        {
+          pathname: "login",
+          query: { email: watch("email"), phone: watch("phone") },
+        },
+        "login"
+      );
+
+    if (isError) toast.error("회원가입이 실패했습니다.");
+  }, [isSuccess, isError, router, watch]);
 
   const onValid = useCallback(
     (values: form) => {
-      const { email, phone } = values;
-      const loginInitValue = {
-        ...(email && { email }),
-        ...(phone && { phone }),
-      };
-
-      const cb = () =>
-        router.push({ pathname: "/login", query: loginInitValue }, "/login");
-      mutation(values, cb);
+      joinMutate(values);
     },
-    [router, mutation]
+    [joinMutate]
   );
 
   return (

@@ -5,8 +5,7 @@ import Modal from "@components/Modal";
 import ModalTitle from "@components/ModalTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import ModalButtons from "./ModalButtons";
-import { FetchType } from "@libs/client/useMutation";
-import { UserRecordWithUser } from "@libs/server/types";
+import useMutation, { FetchType } from "@libs/client/useMutation";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { AnimatePresence } from "framer-motion";
@@ -14,10 +13,7 @@ import useModal from "@libs/client/useModal";
 import { useGetRecordsByPageQuery } from "@store/services/record";
 import { useAppSelector } from "@libs/client/useRedux";
 
-interface props {
-  data?: UserRecordWithUser | null;
-  updateRecords: FetchType;
-}
+interface props {}
 
 interface form {
   startTime: string;
@@ -25,10 +21,13 @@ interface form {
   date: string;
 }
 
-const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
+const EditRecordModal: NextPage<props> = () => {
   const { isShowModal, onHideModal } = useModal("userRecordEdit");
   const query = useAppSelector((state) => state.query.recordQuery);
   const { refetch } = useGetRecordsByPageQuery(query);
+  const selectedData = useAppSelector(
+    (state) => state.adminRecord.selectedData
+  );
 
   const {
     register,
@@ -40,6 +39,8 @@ const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
     mode: "onChange",
   });
 
+  const [mutation] = useMutation({ url: "/api/times" });
+
   const onValid = useCallback(
     (values: form) => {
       const { startTime, endTime, date } = values;
@@ -49,20 +50,29 @@ const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
       if (endTime) {
         end = new Date(`${date} ${endTime}`);
         duration = end.getTime() - start.getTime();
-        updateRecords({ start, end, duration, id: data?.id }, () => {
+        mutation({ start, end, duration, id: selectedData?.id }, () => {
           refetch();
           onHideModal();
         });
       }
     },
-    [data, refetch, onHideModal, updateRecords]
+    [selectedData, refetch, onHideModal, mutation]
   );
 
   useEffect(() => {
-    setValue("date", data ? format(new Date(data.start), "yyyy-MM-dd") : "");
-    setValue("startTime", data ? format(new Date(data.start), "HH:mm") : "");
-    setValue("endTime", data?.end ? format(new Date(data.end), "HH:mm") : "");
-  }, [data]);
+    setValue(
+      "date",
+      selectedData ? format(new Date(selectedData.start), "yyyy-MM-dd") : ""
+    );
+    setValue(
+      "startTime",
+      selectedData ? format(new Date(selectedData.start), "HH:mm") : ""
+    );
+    setValue(
+      "endTime",
+      selectedData?.end ? format(new Date(selectedData.end), "HH:mm") : ""
+    );
+  }, [selectedData]);
 
   return (
     <AnimatePresence>
@@ -82,9 +92,9 @@ const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
             }
           />
           <form onSubmit={handleSubmit(onValid)} className="space-y-2 py-4">
-            {data && data?.user && (
+            {selectedData && selectedData?.user && (
               <span className="block mt-3">
-                {data.user.name}님의 근무기록 입니다.
+                {selectedData.user.name}님의 근무기록 입니다.
               </span>
             )}
             <Input
@@ -148,4 +158,4 @@ const EditProfileModal: NextPage<props> = ({ data, updateRecords }) => {
   );
 };
 
-export default EditProfileModal;
+export default EditRecordModal;

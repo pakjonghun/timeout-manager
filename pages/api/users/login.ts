@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import withMethod from "@libs/server/withMethod";
 import client from "@libs/server/client";
+import { CommonResponse } from "@libs/server/types/dateTypes";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<CommonResponse>
+) => {
   const { phone, email } = req.body;
   const user = await client.users.findUnique({
     where: {

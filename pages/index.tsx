@@ -17,7 +17,7 @@ const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
 
   const { data: workTime } = useGetRecordByDateQuery("");
-  const startTimeDate = workTime?.times?.[0].start;
+  const startTimeDate = workTime?.times?.[0]?.start;
 
   const onConfirmClick = useCallback(() => {
     if (!startTimeDate) return toast.warn("시작 데이터가 없습니다.");

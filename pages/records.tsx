@@ -146,21 +146,14 @@ const Record = () => {
 
   return (
     <Layout title="초과근무 내역" canGoBack={false}>
-      {/* <EditRecordModal
-        data={editModalData}
-        recordUrl={recordUrl}
-        isShow={isShowEditModal}
-        setIsShowEditModal={setIsShowEditModal}
-        updateRecords={updateRecords}
-        onClose={onEditModalClose}
-      /> */}
+      <EditRecordModal />
 
       {/* <RecordDeleteModal
         onClose={onDeleteModalClose}
         showDeleteModal={isShowDeleteModal}
         selectedDataCount={selectList.length}
         onConfirm={onConfirmDelete}
-      /> */}
+      /> 
 
       {/* <div
         className={joinStyleClass(

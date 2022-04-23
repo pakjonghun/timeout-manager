@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Input from "@components/Input";
@@ -7,26 +7,30 @@ import Switch from "@components/Switch";
 import PublicTitle from "@components/PublicTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import LoadingButton from "@components/LoadingButton";
-import useMutation from "@libs/client/useMutation";
 import { LoginType } from "@libs/client/types";
 import { useForm } from "react-hook-form";
+import { useLoginMutation } from "@store/services/user";
+import { toast } from "react-toastify";
 
-interface phoneForm {
+export interface phoneForm {
   phone: string;
 }
 
-interface emailForm {
+export interface emailForm {
   email: string;
 }
 
 const Login = () => {
   const router = useRouter();
   const { email, phone } = router.query;
+  const [loginType, setLoginType] = useState<LoginType>("phone");
+  const [loginMutate, { isLoading, isSuccess, isError }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
-    reset,
+    reset: emailReset,
+    getValues: getEmail,
     formState: { errors },
   } = useForm<emailForm>({
     mode: "all",
@@ -37,49 +41,43 @@ const Login = () => {
     register: phoneRegister,
     handleSubmit: phoneHandleSubmit,
     reset: phoneReset,
+    getValues: getPhone,
     formState: { errors: phoneErrors },
   } = useForm<phoneForm>({
     mode: "all",
     defaultValues: { phone: phone?.toString() || "" },
   });
 
-  const [mutation, { isLoading }] = useMutation({
-    url: "/api/users/login",
-  });
+  useEffect(() => {
+    if (isSuccess) {
+      const query = loginType === "email" ? getEmail() : getPhone();
+      router.push({ pathname: "auth", query }, "auth");
+    }
 
-  const [loginType, setLoginType] = useState<LoginType>("phone");
+    if (isError) toast.error("로그인을 실패 했습니다.");
+  }, [isSuccess, isError, router, loginType, getPhone, getEmail]);
 
-  const onValid = useCallback(
-    (values: emailForm) => {
-      const cb = () =>
-        router.push(
-          { pathname: "/auth", query: { email: values.email } },
-          "/auth"
-        );
-      mutation(values, cb);
+  const onEmailValid = useCallback(
+    (email: emailForm) => {
+      loginMutate(email);
     },
-    [router, mutation]
+    [loginMutate]
   );
 
   const onPhoneValid = useCallback(
-    (values: phoneForm) => {
-      const cb = () =>
-        router.push(
-          { pathname: "/auth", query: { phone: values.phone } },
-          "/auth"
-        );
-      mutation(values, cb);
+    (phone: phoneForm) => {
+      loginMutate(phone);
     },
-    [router, mutation]
+    [loginMutate]
   );
 
-  const onLoginType = useCallback(
+  const onLoginTypeClick = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setLoginType(event.target.checked ? "email" : "phone");
-      reset();
+      emailReset();
       phoneReset();
     },
-    [reset, phoneReset]
+    [emailReset, phoneReset]
   );
 
   return (
@@ -135,14 +133,14 @@ const Login = () => {
           }
           size={{ width: 2.9, height: 1.2 }}
           isOn={loginType === "email"}
-          onSwitch={onLoginType}
+          onSwitch={onLoginTypeClick}
         />
       </header>
       <main>
         <form
           onSubmit={
             loginType === "email"
-              ? handleSubmit(onValid)
+              ? handleSubmit(onEmailValid)
               : phoneHandleSubmit(onPhoneValid)
           }
           className="flex flex-col space-y-3"

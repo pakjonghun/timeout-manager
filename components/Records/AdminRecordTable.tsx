@@ -17,9 +17,11 @@ import {
   selectAll as adminSelectAll,
   removeItem as adminRemoveItem,
   addItem as adminAddItem,
+  setSelectedData,
 } from "@store/reducer/adminRecordReducer";
 import useSort from "@libs/client/useSort";
 import { useGetMeStatusQuery } from "@store/services/user";
+import useModal from "@libs/client/useModal";
 
 const AdminRecordTable = ({}) => {
   const dispatch = useDispatch();
@@ -28,14 +30,16 @@ const AdminRecordTable = ({}) => {
   const userRole = me?.user?.role;
   const { data: records } = useGetRecordsByPageQuery(query);
   const onSort = useSort();
-  const onRecord = useCallback(
+  const { onShowModal } = useModal("userRecordEdit");
+
+  const onRowClick = useCallback(
     (event: React.MouseEvent, data: UserRecordWithUser) => {
       const target = event.target as HTMLElement;
       if (target.id) return;
-      // setEditModalData(data);
-      // setIsShowEditModal(true);
+      onShowModal();
+      dispatch(setSelectedData(data));
     },
-    []
+    [onShowModal, dispatch]
   );
   const { thead, isAllSelected, selectedIds } = useAppSelector((state) => {
     if (userRole === "USER") return state.userRecord;
@@ -100,7 +104,7 @@ const AdminRecordTable = ({}) => {
                   isPickable={true}
                   isSelected={selectedIds.includes(v.id)}
                   onSelect={onSelect}
-                  onClick={onRecord}
+                  onClick={onRowClick}
                 />
               );
 
