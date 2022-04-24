@@ -1,14 +1,17 @@
 import { TimeerStatus } from "./../../libs/client/types/index";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { WorkTimes } from "@prisma/client";
+
+type StartTime = (Pick<WorkTimes, "id"> & { start: string }) | null;
 
 type WorkTime = {
-  startTime: string;
+  startTime: StartTime;
   timerStatus: TimeerStatus;
   isStatusChanging: boolean;
 };
 
 const initialState: WorkTime = {
-  startTime: "",
+  startTime: null,
   timerStatus: "start",
   isStatusChanging: false,
 };
@@ -17,7 +20,7 @@ const workTime = createSlice({
   name: "workTime",
   initialState,
   reducers: {
-    setStartTime: (state, { payload }: PayloadAction<string>) => {
+    setStartTime: (state, { payload }: PayloadAction<StartTime>) => {
       state.startTime = payload;
     },
     startTimer: (state) => {

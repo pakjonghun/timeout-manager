@@ -10,15 +10,17 @@ const useTimeController = () => {
   const [hourTrigger, setHourTrigger] = useState(0);
   const [minuteTrigger, setMinuteTrigger] = useState(0);
   const timerStatus = useAppSelector((state) => state.workTime.timerStatus);
-  const startTime = useAppSelector((state) => state.workTime.startTime);
+  const startTime = useAppSelector((state) => state.workTime.startTime?.start);
 
   useEffect(() => {
-    const startDate = new Date(startTime);
-    if (!isNaN(startDate.getTime())) {
-      const [h, m, s] = getDistanceTime(new Date(startTime));
-      setHour(h);
-      setMinute(m);
-      setSecond(s);
+    if (startTime) {
+      const startDate = new Date(startTime);
+      if (!isNaN(startDate.getTime())) {
+        const [h, m, s] = getDistanceTime(new Date(startTime));
+        setHour(h);
+        setMinute(m);
+        setSecond(s);
+      }
     }
   }, [startTime]);
 

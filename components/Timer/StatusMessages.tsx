@@ -5,10 +5,11 @@ import { format } from "date-fns";
 
 const StatusMessages = () => {
   const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
-  const startTime = useAppSelector((state) => state.workTime.startTime);
+  const startTime = useAppSelector((state) => state.workTime.startTime?.start);
   const canStartTime = getCanStartTime();
 
   if (!startTime) return null;
+
   const startDate = new Date(startTime);
   const canStart = startDate.getTime() < canStartTime.getTime();
 

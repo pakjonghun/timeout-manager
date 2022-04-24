@@ -4,7 +4,7 @@ import HeaderRow from "@components/Row/HeaderRow";
 import TimerRecordRow from "@components/Row/TimerRecordRow";
 import TimeoutConfirmModal from "@components/Modals/TimeoutConfirmModal";
 import { timerRecordThead } from "@libs/client/constants";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useAppSelector } from "@libs/client/useRedux";
 import useModal from "@libs/client/useModal";
 import { toast } from "react-toastify";
@@ -14,6 +14,7 @@ import {
   useEndWorkMutation,
   useGetTimerWorkTimesQuery,
 } from "@store/services/workTime";
+import { hideModal } from "@store/reducer/modal";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
@@ -34,13 +35,24 @@ const Home = () => {
   }, [isError]);
 
   const onConfirmClick = useCallback(() => {
-    endWorkMutate({ start: new Date(startTime), end: new Date() });
+    if (!startTime) {
+      onHideModal();
+      toast.error("시작시간이 없습니다.");
+      return;
+    }
+    const [_, end, duration] = getStartEndDuration(startTime.start);
+    endWorkMutate({ start: startTime.id, end, duration });
     onHideModal();
   }, [startTime, endWorkMutate, onHideModal]);
 
-  const duration = getDuration(
-    new Date().getTime() - new Date(startTime).getTime()
-  );
+  const duration = useMemo(() => {
+    if (startTime) {
+      return getDuration(
+        new Date().getTime() - new Date(startTime.start).getTime()
+      );
+    }
+    return "00";
+  }, [startTime]);
 
   return (
     <Layout title="초과근무 관리" canGoBack={false}>
@@ -66,3 +78,11 @@ const Home = () => {
 };
 
 export default Home;
+
+function getStartEndDuration(startTime: string): [string, string, number] {
+  const start = new Date(startTime);
+  const end = new Date();
+  const duration = end.getTime() - start.getTime();
+
+  return [start.toString(), end.toString(), duration];
+}

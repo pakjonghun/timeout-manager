@@ -1,3 +1,4 @@
+import { EndWorkRequest as BodyType } from "./../../libs/client/types/dataTypes";
 import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/server/client";
 import withMethod from "@libs/server/withMethod";
@@ -5,17 +6,12 @@ import withCookie from "@libs/server/withCookie";
 import { getCanStartTime } from "@libs/server/utils";
 import { WorkTimeResponse } from "@libs/server/types/dataTypes";
 
-type BodyType = {
-  start: string;
-  end?: string;
-};
-
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<WorkTimeResponse>
 ) => {
   if (req.method === "POST") {
-    const { start, end } = req.body as BodyType;
+    const { start, end, duration } = req.body as BodyType;
 
     if (!end && start) {
       await client.users.update({
@@ -34,20 +30,19 @@ const handler = async (
               id: req.session.user!.id,
             },
           },
-          start: new Date(start.toString()),
+          start: new Date(start),
         },
       });
       return res.status(201).json({ success: true, workTime });
     }
 
-    if (start && end) {
+    if (start && end && duration) {
       const isTimeExist = await client.workTimes.findFirst({
         where: {
           userId: req.session.user!.id,
-          start: new Date(start.toString()),
+          id: start,
         },
       });
-
       if (!isTimeExist) return res.status(400).json({ success: false });
 
       const workTime = await client.workTimes.update({
@@ -55,9 +50,8 @@ const handler = async (
           id: isTimeExist.id,
         },
         data: {
-          end,
-          duration:
-            new Date(end.toString()).getTime() - isTimeExist.start.getTime(),
+          end: new Date(end),
+          duration,
         },
       });
 

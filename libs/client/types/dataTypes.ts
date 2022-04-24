@@ -26,12 +26,13 @@ export type JoinRequest = {
 };
 
 export type StartWorkRequest = {
-  start: Date;
+  start: string;
 };
 
 export type EndWorkRequest = {
-  start: Date;
-  end: Date;
+  start: number;
+  end: string;
+  duration: number;
 };
 
 export type GetWorkTimesRequest = {

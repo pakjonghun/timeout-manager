@@ -1,15 +1,27 @@
-import { memo } from "react";
-import { NextPage } from "next";
+import { memo, useCallback, useEffect } from "react";
 import StatusButton from "./StatusButton";
-import { useAppSelector } from "@libs/client/useRedux";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { joinStyleClass } from "@libs/client/utils";
+import { useStartWorkMutation } from "@store/services/workTime";
+import { toast } from "react-toastify";
+import useModal from "@libs/client/useModal";
 
-interface props {
-  onClickTimerButton: () => void;
-}
-
-const StatusButtons: NextPage<props> = ({ onClickTimerButton }) => {
+const StatusButtons = () => {
+  const dispatch = useAppDispatch();
+  const { onShowModal } = useModal("confirmTimer");
   const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
+  const [startWorkMutation, { isError, data }] = useStartWorkMutation();
+
+  useEffect(() => {
+    if (isError) toast.error("초과근무 시작을 실패했습니다..");
+    if (data && !data.success) toast.error("초과근무 시작을 실패했습니다..");
+  }, [isError, data, dispatch]);
+
+  const onClickTimerButton = useCallback(() => {
+    if (timeoutStatus === "end") return onShowModal();
+    startWorkMutation({ start: new Date().toString() });
+  }, [timeoutStatus, startWorkMutation, onShowModal]);
+
   return (
     <div
       className={joinStyleClass(
