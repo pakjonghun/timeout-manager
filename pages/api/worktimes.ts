@@ -16,6 +16,7 @@ const handler = async (
 ) => {
   if (req.method === "POST") {
     const { start, end } = req.body as BodyType;
+
     if (!end && start) {
       await client.users.update({
         where: {
@@ -36,7 +37,6 @@ const handler = async (
           start: new Date(start.toString()),
         },
       });
-
       return res.status(201).json({ success: true, workTime });
     }
 

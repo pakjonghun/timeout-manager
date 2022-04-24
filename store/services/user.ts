@@ -54,7 +54,7 @@ export const user = api.injectEndpoints({
             case "WORKING":
               if (user?.startTime) {
                 api.dispatch(startTimer());
-                api.dispatch(setStartTime(user.startTime));
+                api.dispatch(setStartTime(user.startTime.start.toString()));
               } else {
                 return { data: { success: false } };
               }

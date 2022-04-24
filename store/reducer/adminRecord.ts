@@ -1,9 +1,18 @@
-import { AdminRecordHeaderType } from "./../../libs/client/types/dataTypes";
-import { SortValue } from "@libs/client/types/dataTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+import { SortValue, Thead } from "@libs/client/types";
 
-export const thead: AdminRecordHeaderType = {
+export type adminRecordColumnTitle =
+  | "#"
+  | "name"
+  | "start"
+  | "end"
+  | "duration";
+type adminRecordThead = {
+  [key: string]: Thead;
+};
+
+export const thead: adminRecordThead = {
   ["#"]: { colSpan: 1 },
   name: { sort: null, colSpan: 2 },
   start: { sort: null, colSpan: 2 },
@@ -16,7 +25,7 @@ type AdminRecordStateType = {
   selectedIds: number[];
   isAllSelected: boolean;
   currentPage: number;
-  currentSort: [keyof AdminRecordHeaderType | null, SortType | null];
+  currentSort: [keyof AdminRecordHeaderType | null, SortValue | null];
 };
 
 const initialState: AdminRecordStateType = {
@@ -29,7 +38,7 @@ const initialState: AdminRecordStateType = {
 
 type SortPayloadType = {
   title: keyof AdminRecordHeaderType;
-  sort: SortType;
+  sort: SortValue;
 };
 
 export type NextPageType = {

@@ -28,6 +28,7 @@ const handler = async (
           end: null,
         },
         select: {
+          id: true,
           start: true,
         },
         take: 1,
@@ -39,7 +40,7 @@ const handler = async (
       if (startTime.length) {
         return res.json({
           success: true,
-          user: { ...user, startTime: startTime[0].start.toString() },
+          user: { ...user, startTime: startTime[0] },
         });
       } else {
         await client.users.update({

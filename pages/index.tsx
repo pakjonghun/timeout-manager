@@ -17,11 +17,14 @@ const Home = () => {
   const startTime = useAppSelector((state) => state.workTime.startTime);
 
   const [endWorkMutate, { isError }] = useEndWorkMutation();
-  const { refetch } = useGetStatusQuery();
+  const { refetch, isError: isStatusError, data } = useGetStatusQuery();
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+    if (isStatusError || (data && !data?.success)) {
+      toast.error("사용자 정보를 다시 받아오지 못했습니다.");
+    }
+  }, [data, isStatusError, refetch]);
 
   useEffect(() => {
     if (isError) toast.error("초과근무 종료가 실패했습니다.");
