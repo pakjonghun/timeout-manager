@@ -64,7 +64,7 @@ export const user = api.injectEndpoints({
               api.dispatch(setStartTime(""));
               break;
             default:
-              break;
+              return { data: { success: false } };
           }
 
           return { data: { success: true } };

@@ -12,7 +12,32 @@ import {
 
 const workTime = api.injectEndpoints({
   endpoints: (build) => ({
-    getWorkTimes: build.query<WorkTimeResponse, GetWorkTimesRequest>({
+    getTimerWorkTimes: build.query<WorkTimeResponse, void>({
+      query: () => "worktimes",
+      providesTags: (result) =>
+        tagMaker<WorkTimesResponseTimes, Tags>(result?.workTimes, "WorkTime"),
+    }),
+    startWork: build.mutation<WorkTimeResponse, StartWorkRequest>({
+      query: (body) => ({
+        body,
+        method: "POST",
+        url: "worktimes",
+      }),
+      invalidatesTags: [{ type: "WorkTime" }, { type: "MyStatus" }],
+    }),
+
+    endWork: build.mutation<WorkTimeResponse, EndWorkRequest>({
+      query: (body) => ({
+        body,
+        method: "POST",
+        url: "worktimes",
+      }),
+      invalidatesTags: (result) => [
+        { type: "WorkTime", id: result?.workTime?.id },
+        { type: "MyStatus" },
+      ],
+    }),
+    getRecordWorkTimes: build.query<WorkTimeResponse, GetWorkTimesRequest>({
       query: ({ page, sortKey, sortValue }) =>
         !sortKey || !sortValue
           ? queryMaker([{ key: "page", value: page }])
@@ -23,35 +48,12 @@ const workTime = api.injectEndpoints({
       providesTags: (result) =>
         tagMaker<WorkTimesResponseTimes, Tags>(result?.workTimes, "WorkTime"),
     }),
-
-    startWork: build.mutation<WorkTimeResponse, StartWorkRequest>({
-      query: (body) => ({
-        body,
-        method: "POST",
-        url: "worktimes",
-      }),
-      invalidatesTags: (result) =>
-        result?.workTime
-          ? [{ id: result.workTime.id, type: "WorkTime" }]
-          : [{ id: "LIST", type: "WorkTime" }],
-    }),
-
-    endWork: build.mutation<WorkTimeResponse, EndWorkRequest>({
-      query: (body) => ({
-        body,
-        method: "POST",
-        url: "worktimes",
-      }),
-      invalidatesTags: (result) =>
-        result?.workTime
-          ? [{ id: result.workTime.id, type: "WorkTime" }, "MyStatus"]
-          : [{ id: "LIST", type: "WorkTime" }, "MyStatus"],
-    }),
   }),
 });
 
 export const {
-  useGetWorkTimesQuery,
+  useGetTimerWorkTimesQuery,
+  useGetRecordWorkTimesQuery,
   useStartWorkMutation,
   useEndWorkMutation,
 } = workTime;

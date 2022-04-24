@@ -21,21 +21,17 @@ const Timer: NextPage<props> = ({ children }) => {
 
   const { onShowModal } = useModal("confirmTimer");
   const timeoutStatus = useAppSelector((state) => state.workTime.timerStatus);
-  const [startWorkMutation, { isSuccess, isError, data }] =
-    useStartWorkMutation();
+  const [startWorkMutation, { isError, data }] = useStartWorkMutation();
 
   useEffect(() => {
     if (isError) toast.error("초과근무 시작을 실패했습니다..");
-    if (isSuccess && data?.workTime?.start) {
-      dispatch(setStartTime(data.workTime.start.toString()));
-    }
-  }, [isSuccess, isError, dispatch]);
+    if (data && !data.success) toast.error("초과근무 시작을 실패했습니다..");
+  }, [isError, data, dispatch]);
 
   const onClickTimerButton = useCallback(() => {
     if (timeoutStatus === "end") return onShowModal();
-    dispatch(startTimer());
     startWorkMutation({ start: new Date() });
-  }, [timeoutStatus, startWorkMutation, dispatch, onShowModal]);
+  }, [timeoutStatus, startWorkMutation, onShowModal]);
 
   return (
     <div className="grid grid-rows-[2fr,minmax(6rem,1fr),3fr] place-content-center">

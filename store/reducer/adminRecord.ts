@@ -8,6 +8,7 @@ export type adminRecordColumnTitle =
   | "start"
   | "end"
   | "duration";
+
 type adminRecordThead = {
   [key: string]: Thead;
 };

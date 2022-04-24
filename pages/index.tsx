@@ -5,26 +5,29 @@ import TimerRecordRow from "@components/Row/TimerRecordRow";
 import TimeoutConfirmModal from "@components/Modals/TimeoutConfirmModal";
 import { timerRecordThead } from "@libs/client/constants";
 import { useCallback, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { useAppSelector } from "@libs/client/useRedux";
 import useModal from "@libs/client/useModal";
 import { toast } from "react-toastify";
 import { getDuration } from "@libs/client/utils";
 import { useGetStatusQuery } from "@store/services/user";
-import { useEndWorkMutation } from "@store/services/workTime";
+import {
+  useEndWorkMutation,
+  useGetTimerWorkTimesQuery,
+} from "@store/services/workTime";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
   const startTime = useAppSelector((state) => state.workTime.startTime);
 
   const [endWorkMutate, { isError }] = useEndWorkMutation();
-  const { refetch, isError: isStatusError, data } = useGetStatusQuery();
+  const { isError: isStatusError, data } = useGetStatusQuery();
+  const { data: workTimes } = useGetTimerWorkTimesQuery();
 
   useEffect(() => {
-    refetch();
     if (isStatusError || (data && !data?.success)) {
       toast.error("사용자 정보를 다시 받아오지 못했습니다.");
     }
-  }, [data, isStatusError, refetch]);
+  }, [data, isStatusError]);
 
   useEffect(() => {
     if (isError) toast.error("초과근무 종료가 실패했습니다.");
@@ -48,14 +51,14 @@ const Home = () => {
           onConfirm={onConfirmClick}
         />
         <Timer>
-          {/* {!!workTime?.times?.length && (
+          {!!workTimes?.workTimes && (
             <ul className="w-[17rem] max-h-96 mx-auto overflow-y-auto divide-y-[1px]">
               <HeaderRow options={timerRecordThead} size="xs" />
-              {workTime.times.map((t) => (
+              {workTimes.workTimes.map((t) => (
                 <TimerRecordRow key={t.id} time={t} />
               ))}
             </ul>
-          )} */}
+          )}
         </Timer>
       </div>
     </Layout>

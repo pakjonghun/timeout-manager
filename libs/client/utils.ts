@@ -71,7 +71,7 @@ export const tagMaker = <R extends { id: string | number }[], T extends string>(
   resultsWithIds
     ? [
         ...resultsWithIds.map(({ id }) => ({ type, id })),
-        { type: type as const, id: "LIST" },
+        { type: type, id: "LIST" },
       ]
     : [{ type, id: "LIST" }];
 
