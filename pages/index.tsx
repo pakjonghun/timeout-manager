@@ -64,7 +64,7 @@ const Home = () => {
         <Timer>
           {!!workTimes?.workTimes && (
             <ul className="w-[17rem] max-h-96 mx-auto overflow-y-auto divide-y-[1px]">
-              <HeaderRow options={timerRecordThead} size="xs" />
+              <HeaderRow thead={timerRecordThead} size="xs" />
               {workTimes.workTimes.map((t) => (
                 <TimerRecordRow key={t.id} time={t} />
               ))}

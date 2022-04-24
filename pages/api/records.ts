@@ -3,22 +3,16 @@ import client from "@libs/server/client";
 import withMethod from "@libs/server/withMethod";
 import withCookie from "@libs/server/withCookie";
 import { pageTake } from "@libs/server/constants";
-import {
-  RecordSortKeyType,
-  SortType,
-  UserRecordType,
-} from "@libs/server/types";
 import { getCanStartTime } from "@libs/server/utils";
-
-type PageType = { page: string };
-type PagnationType = { [key in RecordSortKeyType]?: SortType } & PageType;
+import { GetRecordRequest } from "@libs/client/types/dataTypes";
+import { GetRecordResponse } from "@libs/server/types/dataTypes";
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse<UserRecordType>
+  res: NextApiResponse<GetRecordResponse>
 ) => {
   const { page, createdAt, end, start, duration, name } =
-    req.query as PagnationType;
+    req.query as GetRecordRequest;
 
   if (req.method === "GET") {
     if (!page || +page < 1) return res.status(400).json({ success: false });

@@ -2,27 +2,26 @@ import { NextPage } from "next";
 import Sort from "@components/Sort";
 import { SizeType } from "@libs/client/types/styleTypes";
 import { joinStyleClass } from "@libs/client/utils";
-import React from "react";
 
 interface props {
-  options: any;
+  thead: any;
   isSelected?: boolean;
   size?: SizeType;
   styles?: React.CSSProperties;
-  onSort?: (event: React.FormEvent<HTMLElement>) => void;
+  onSortClick?: (event: React.FormEvent<HTMLElement>) => void;
   onSelectAll?: () => void;
 }
 
 const HeaderRow: NextPage<props> = ({
-  options,
+  thead,
   styles,
   size = "sm",
   isSelected,
-  onSort,
+  onSortClick,
   onSelectAll,
 }) => {
-  const titles = Object.keys(options);
-  const len = titles.reduce((acc, cur) => acc + options[cur]["colSpan"], 0);
+  const titles = Object.keys(thead);
+  const len = titles.reduce((acc, cur) => acc + thead[cur]["colSpan"], 0);
 
   const paddings = {
     xs: "py-[0.5rem]",
@@ -33,7 +32,7 @@ const HeaderRow: NextPage<props> = ({
 
   return (
     <li
-      {...(onSort && { onChange: onSort })}
+      {...(onSortClick && { onChange: onSortClick })}
       style={{ ...styles, gridTemplateColumns: `repeat(${len},1fr)` }}
       className={joinStyleClass(
         "sticky top-0 grid place-items-center font-medium text-gray-600 bg-gray-100 z-10",
@@ -44,7 +43,7 @@ const HeaderRow: NextPage<props> = ({
       {titles.map((v) => (
         <span
           key={v}
-          style={{ gridColumn: `span ${options[v]["colSpan"]}` }}
+          style={{ gridColumn: `span ${thead[v]["colSpan"]}` }}
           className="flex min-w-max space-x-1"
         >
           {v === "#" ? (
@@ -85,8 +84,8 @@ const HeaderRow: NextPage<props> = ({
             <span>{v.toUpperCase()}</span>
           )}
 
-          {options[v]["sort"] !== undefined && (
-            <Sort id={v} sort={options[v]["sort"]} />
+          {thead[v]["sort"] !== undefined && (
+            <Sort id={v} sort={thead[v]["sort"]} />
           )}
         </span>
       ))}

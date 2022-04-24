@@ -60,12 +60,8 @@ const handler = async (
       where: { id: req.session!.user!.id },
       select: {
         id: true,
-        email: true,
-        phone: true,
-        avatar: true,
-        name: true,
-        role: true,
         status: true,
+        role: true,
       },
     });
     if (!user) return res.status(400).json({ success: false });

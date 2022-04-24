@@ -1,5 +1,4 @@
 import { NextPage } from "next";
-import { UserRecordWithUser } from "@libs/server/types";
 import { getDuration, joinStyleClass } from "@libs/client/utils";
 import { format } from "date-fns";
 

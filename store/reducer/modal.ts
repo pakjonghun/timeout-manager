@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type ModalType = "confirmTimer" | "userRecordEdit";
 
-interface IModalState {
+type ModalState = {
   [key: string]: boolean;
-}
+};
 
-const initialState: IModalState = {
+const initialState: ModalState = {
   confirmTimer: false,
 };
 

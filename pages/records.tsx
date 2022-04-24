@@ -10,24 +10,14 @@ import useModal from "@libs/client/useModal";
 import useMutation from "@libs/client/useMutation";
 import usePagnation from "@libs/client/usePagnation";
 import { joinStyleClass } from "@libs/client/utils";
-import {
-  AdminRecordHeaderType,
-  UserRecordHeaderType,
-} from "@libs/client/types/dataTypes";
-import {
-  CommonResType,
-  MeType,
-  UserRecordType,
-  UserRecordWithUser,
-} from "@libs/server/types";
+
 import usePage from "@libs/client/usePagnation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
-import { useGetRecordsByPageQuery } from "@store/services/record";
+
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
-import { useGetMeStatusQuery } from "@store/services/user";
+
 import { Role } from "@prisma/client";
-import { setQuery } from "@store/reducer/queryReducer";
 
 const Record = () => {
   // const [recordUrl, setRecordUrl] = useState("/api/records?page=1");
@@ -122,31 +112,32 @@ const Record = () => {
   //   if (!selectList.length) return toast.warn("선택된 항목이 없습니다.");
   //   setIsShowDeleteModal(true);
   // }, [selectList, setIsShowDeleteModal]);
-  const dispatch = useAppDispatch();
-  const { data: me } = useGetMeStatusQuery("");
 
-  //
-  const reducerName =
-    me?.user?.role === "ADMIN" ? "adminRecord" : "adminRecord";
-  const { page, totalPage, onNextPage, onPreviousPage } = usePage(reducerName);
-  const { currentSort, currentPage } = useAppSelector(
-    (state) => state[reducerName]
-  );
+  // const dispatch = useAppDispatch();
+  // const { data: me } = useGetMeStatusQuery("");
 
-  useEffect(() => {
-    const url = new URLSearchParams();
-    url.append("page", currentPage + "");
+  // //
+  // const reducerName =
+  //   me?.user?.role === "ADMIN" ? "adminRecord" : "adminRecord";
+  // const { page, totalPage, onNextPage, onPreviousPage } = usePage(reducerName);
+  // const { currentSort, currentPage } = useAppSelector(
+  //   (state) => state[reducerName]
+  // );
 
-    if (currentSort[0] && currentSort[1]) {
-      url.append(currentSort[0], currentSort[1]);
-    }
+  // useEffect(() => {
+  //   const url = new URLSearchParams();
+  //   url.append("page", currentPage + "");
 
-    dispatch(setQuery({ key: "recordQuery", query: `${url.toString()}` }));
-  }, [currentSort, currentPage, dispatch]);
+  //   if (currentSort[0] && currentSort[1]) {
+  //     url.append(currentSort[0], currentSort[1]);
+  //   }
+
+  //   dispatch(setQuery({ key: "recordQuery", query: `${url.toString()}` }));
+  // }, [currentSort, currentPage, dispatch]);
 
   return (
     <Layout title="초과근무 내역" canGoBack={false}>
-      <EditRecordModal />
+      {/* <EditRecordModal /> */}
 
       {/* <RecordDeleteModal
         onClose={onDeleteModalClose}
@@ -171,12 +162,12 @@ const Record = () => {
 
       <AdminRecordTable />
 
-      <PageNationButtons
+      {/* <PageNationButtons
         page={page}
         totalPage={totalPage}
         onNextPage={onNextPage}
         onPrePage={onPreviousPage}
-      />
+      /> */}
       {/* </div> */}
     </Layout>
   );

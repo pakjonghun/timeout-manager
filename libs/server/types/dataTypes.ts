@@ -15,13 +15,24 @@ export type WorkTimeResponse = {
 } & CommonResponse;
 
 export type MyStatusResponse = {
-  user?: Pick<Users, "status"> & {
+  user?: Pick<Users, "status" | "id"> & {
     startTime?: Pick<WorkTimes, "id" | "start">;
   };
 } & CommonResponse;
 
-type MyDetailInfoResponse = {
-  user?: Omit<Users, "createdAt" | "updatedAt">;
+export type MyDetailInfoResponse = {
+  user?: Pick<Users, "id" | "status" | "role">;
 } & CommonResponse;
 
 export type MeResponse = MyStatusResponse | MyDetailInfoResponse;
+
+type WithUserRecord = Omit<WorkTimes, "userId" | "updatedAt"> & {
+  user?: Omit<Users, "createdAt" | "updatedAt">;
+};
+
+export type GetRecordResponse = {
+  records?: WithUserRecord[];
+  success: boolean;
+  totalPage?: number;
+  totalCount?: number;
+} & CommonResponse;

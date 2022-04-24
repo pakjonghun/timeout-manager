@@ -1,3 +1,4 @@
+import { RootState } from "./../index";
 import { api, Tags } from "./index";
 import { queryMaker, tagMaker } from "./../../libs/client/utils";
 import {
@@ -103,14 +104,30 @@ const workTime = api.injectEndpoints({
       },
       invalidatesTags: ["MyStatus"],
     }),
-    getRecordWorkTimes: build.query<WorkTimeResponse, GetWorkTimesRequest>({
-      query: ({ page, sortKey, sortValue }) =>
-        !sortKey || !sortValue
-          ? queryMaker([{ key: "page", value: page }])
-          : queryMaker([
+    getRecordWorkTimes: build.query<WorkTimeResponse, void>({
+      async queryFn(_, api, __, fetch) {
+        const state = api.getState() as RootState;
+        const page = state.record.currentPage;
+        const [sortKey, sortValue] = state.record.currentSort;
+        let query;
+        switch (true) {
+          case !!sortKey && !!sortValue:
+            query = queryMaker([
+              { key: sortKey!, value: sortValue! },
               { key: "page", value: page },
-              { key: sortKey, value: sortValue },
-            ]),
+            ]);
+            break;
+
+          default:
+            query = queryMaker([{ key: "page", value: page }]);
+            break;
+        }
+
+        const result = await fetch(`worktimes?${query}`);
+        if (result.data) return { data: result.data as WorkTimeResponse };
+        else return { data: { success: false } };
+      },
+
       providesTags: (result) =>
         tagMaker<WorkTimesResponseTimes, Tags>(result?.workTimes, "WorkTime"),
     }),

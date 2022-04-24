@@ -2,99 +2,84 @@ import { useCallback } from "react";
 import HeaderRow from "@components/Row/HeaderRow";
 import UserRecordRow from "@components/Row/UserRecordRow";
 import AdminNameRecordRow from "@components/Row/AdminNameRecordRow";
-import { UserRecordWithUser } from "@libs/server/types";
-import { useAppSelector } from "@libs/client/useRedux";
-import { useGetRecordsByPageQuery } from "@store/services/record";
-import { useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { useGetRecordWorkTimesQuery } from "@store/services/workTime";
 import {
   addItem,
   clearAll,
   removeItem,
   selectAll,
-} from "@store/reducer/userRecordReducer";
-import {
-  clearAll as adminClearAll,
-  selectAll as adminSelectAll,
-  removeItem as adminRemoveItem,
-  addItem as adminAddItem,
-  setSelectedData,
-} from "@store/reducer/adminRecordReducer";
-import useSort from "@libs/client/useSort";
-import { useGetMeStatusQuery } from "@store/services/user";
-import useModal from "@libs/client/useModal";
+  sort,
+  SortKey,
+} from "@store/reducer/record";
 
 const AdminRecordTable = ({}) => {
-  const dispatch = useDispatch();
-  const { data: me } = useGetMeStatusQuery("status=1");
-  const query = useAppSelector((state) => state.query.recordQuery);
-  const userRole = me?.user?.role;
-  const { data: records } = useGetRecordsByPageQuery(query);
-  const onSort = useSort();
-  const { onShowModal } = useModal("userRecordEdit");
+  const dispatch = useAppDispatch();
 
-  const onRowClick = useCallback(
-    (event: React.MouseEvent, data: UserRecordWithUser) => {
-      const target = event.target as HTMLElement;
-      if (target.id) return;
-      onShowModal();
-      dispatch(setSelectedData(data));
+  const thead = useAppSelector((state) => state.record.theads.adminThead);
+  const selectedIds = useAppSelector((state) => state.record.selectedIds);
+  const userRole = useAppSelector((state) => state.user.role);
+  const { data: records, isLoading, isError } = useGetRecordWorkTimesQuery();
+
+  const onSortClick = useCallback(
+    (event: React.FormEvent<HTMLElement>) => {
+      if (!userRole) return;
+
+      const target = event.target as HTMLInputElement;
+      if (target.id === "allSelectBoxLabel") return;
+
+      const payload = {
+        sortKey: target.value as SortKey,
+        userRole,
+      };
+      dispatch(sort(payload));
     },
-    [onShowModal, dispatch]
+    [userRole, dispatch]
   );
-  const { thead, isAllSelected, selectedIds } = useAppSelector((state) => {
-    if (userRole === "USER") return state.userRecord;
-    else return state.adminRecord;
-  });
+
+  const onSelectAll = useCallback(() => {
+    if (!records || !records?.workTimes) return;
+
+    const allLen = records.workTimes.length;
+
+    if (allLen === selectedIds.length) dispatch(clearAll());
+    else dispatch(selectAll(selectedIds));
+  }, [selectedIds, records, dispatch]);
 
   const onSelect = useCallback(
     (event: React.FormEvent<HTMLElement>) => {
       const value = +(event.target as HTMLInputElement).value;
       const isInclude = selectedIds.includes(value);
 
-      switch (userRole) {
-        case "USER":
-          if (!isInclude) dispatch(addItem(value));
-          else dispatch(removeItem(value));
-          break;
-
-        default:
-          if (!isInclude) dispatch(adminAddItem(value));
-          else dispatch(adminRemoveItem(value));
-          break;
-      }
+      if (!isInclude) dispatch(addItem(value));
+      else dispatch(removeItem(value));
     },
-    [userRole, selectedIds, dispatch]
+    [selectedIds, dispatch]
   );
 
-  const onSelectAll = useCallback(() => {
-    if (!records?.records) return;
-    const ids = records.records.map((v) => v.id);
+  const onRowClick = useCallback((event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.id) return;
+    // onShowModal();
+    // dispatch(setSelectedData(data));
+  }, []);
 
-    switch (isAllSelected) {
-      case true:
-        if (userRole === "USER") dispatch(clearAll());
-        else dispatch(adminClearAll());
-        break;
+  if (!records?.workTimes) return null;
 
-      default:
-        if (userRole === "USER") dispatch(selectAll(ids));
-        else dispatch(adminSelectAll(ids));
-        break;
-    }
-  }, [records, userRole, isAllSelected, dispatch]);
+  if (isError) return null;
 
-  if (!userRole) return null;
+  if (isLoading) return null;
 
   return (
     <ul className="px-5 relative pb-10 divide-y-[1px] mt-2 max-h-[80vh] text-sm rounded-md overflow-y-auto">
       <HeaderRow
-        options={thead}
-        isSelected={isAllSelected}
-        onSort={onSort}
+        thead={thead}
+        isSelected={selectedIds.length === records?.workTimes?.length}
+        onSortClick={onSortClick}
         onSelectAll={onSelectAll}
       />
-      {records?.records &&
-        records.records.map((v) => {
+      {records?.workTimes &&
+        records.workTimes.map((v) => {
           switch (userRole) {
             case "ADMIN":
               return (

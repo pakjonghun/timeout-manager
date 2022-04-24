@@ -1,6 +1,9 @@
 import { endTimer } from "@store/reducer/workTime";
 import { setStartTime, startTimer } from "@store/reducer/workTime";
-import { MyStatusResponse } from "./../../libs/server/types/dataTypes";
+import {
+  MyDetailInfoResponse,
+  MyStatusResponse,
+} from "./../../libs/server/types/dataTypes";
 import { CommonResponse } from "@libs/server/types/dataTypes";
 import {
   LoginRequest,
@@ -42,10 +45,13 @@ export const user = api.injectEndpoints({
         url: "users",
       }),
     }),
+    getMe: build.query<MyDetailInfoResponse, void>({
+      query: () => "users/me",
+    }),
     getStatus: build.query<MyStatusResponse, void>({
-      queryFn: async (_, api, __, baseQuery) => {
+      queryFn: async (_, api, __, fetch) => {
         try {
-          const result = await baseQuery(
+          const result = await fetch(
             "http://localhost:3000/api/users/me?status=1"
           );
 
@@ -88,4 +94,5 @@ export const {
   useJoinMutation,
   useGetStatusQuery,
   useUpdateProfileMutation,
+  useGetMeQuery,
 } = user;

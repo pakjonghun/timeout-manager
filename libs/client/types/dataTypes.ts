@@ -40,3 +40,12 @@ export type GetWorkTimesRequest = {
   sortValue?: SortValue;
   page: number;
 };
+
+export type GetRecordRequest = {
+  page: string;
+  createdAt?: SortValue;
+  end?: SortValue;
+  start?: SortValue;
+  duration?: SortValue;
+  name?: SortValue;
+};
