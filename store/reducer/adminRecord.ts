@@ -1,19 +1,22 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { SortValue, Thead } from "@libs/client/types";
+import { Role } from "@prisma/client";
 
-export type adminRecordColumnTitle =
-  | "#"
-  | "name"
-  | "start"
-  | "end"
-  | "duration";
-
-type adminRecordThead = {
+type UserTheadKey = "createdAt" | "start" | "end" | "duration";
+type AdminTheadKey = "#" | "name" | "start" | "end" | "duration";
+type TheadState = {
   [key: string]: Thead;
 };
 
-export const thead: adminRecordThead = {
+const userThead: TheadState = {
+  createdAt: { sort: null, colSpan: 3 },
+  start: { sort: null, colSpan: 2 },
+  end: { sort: null, colSpan: 2 },
+  duration: { sort: null, colSpan: 2 },
+};
+
+const adminThead: TheadState = {
   ["#"]: { colSpan: 1 },
   name: { sort: null, colSpan: 2 },
   start: { sort: null, colSpan: 2 },
@@ -22,15 +25,15 @@ export const thead: adminRecordThead = {
 };
 
 type AdminRecordStateType = {
-  thead: AdminRecordHeaderType;
+  theads: { userThead: TheadState; adminThead: TheadState };
   selectedIds: number[];
   isAllSelected: boolean;
   currentPage: number;
-  currentSort: [keyof AdminRecordHeaderType | null, SortValue | null];
+  currentSort: [UserTheadKey | AdminTheadKey | null, SortValue | null];
 };
 
 const initialState: AdminRecordStateType = {
-  thead,
+  theads: { userThead, adminThead },
   selectedIds: [],
   isAllSelected: false,
   currentPage: 1,
@@ -38,8 +41,9 @@ const initialState: AdminRecordStateType = {
 };
 
 type SortPayloadType = {
-  title: keyof AdminRecordHeaderType;
-  sort: SortValue;
+  userRole: Role;
+  sortKey: UserTheadKey | AdminTheadKey;
+  sortValue: SortValue;
 };
 
 export type NextPageType = {
@@ -51,15 +55,27 @@ const adminRecordSlice = createSlice({
   initialState,
   reducers: {
     sort: (state, { payload }: PayloadAction<SortPayloadType>) => {
-      const { title, sort } = payload;
-      state.thead[title].sort = sort;
+      const { userRole, sortKey, sortValue } = payload;
 
-      if (state.currentSort[0] && state.currentSort[0] !== title) {
-        state.thead[state.currentSort[0]].sort = null;
+      switch (userRole) {
+        case "ADMIN":
+          state.theads.userThead = getSortedThead({
+            sortKey,
+            sortValue,
+            thead: { ...adminThead },
+          });
+          break;
+        case "USER":
+          state.theads.userThead = getSortedThead({
+            sortKey,
+            sortValue,
+            thead: { ...userThead },
+          });
+          break;
+
+        default:
+          return state;
       }
-
-      state.currentSort[0] = title;
-      state.currentSort[1] = sort;
     },
     addItem: (state, { payload }: PayloadAction<number>) => {
       state.selectedIds.push(payload);
@@ -90,3 +106,18 @@ export const { sort, addItem, removeItem, selectAll, clearAll } =
   adminRecordSlice.actions;
 
 export default adminRecordSlice.reducer;
+
+type GetSortTheadArgs = {
+  sortKey: string;
+  sortValue: SortValue;
+  thead: TheadState;
+};
+
+function getSortedThead({ sortKey, sortValue, thead }: GetSortTheadArgs) {
+  Object.keys(thead).forEach((key) => {
+    thead[key].sort = null;
+    if (key === sortKey) thead[key].sort = sortValue;
+  });
+
+  return thead;
+}

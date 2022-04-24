@@ -14,7 +14,6 @@ import {
   useEndWorkMutation,
   useGetTimerWorkTimesQuery,
 } from "@store/services/workTime";
-import { hideModal } from "@store/reducer/modal";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
