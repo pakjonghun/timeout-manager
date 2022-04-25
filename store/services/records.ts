@@ -1,4 +1,7 @@
-import { SelectedData } from "./../../libs/client/types/dataTypes";
+import {
+  DeleteRecordRequest,
+  SelectedData,
+} from "./../../libs/client/types/dataTypes";
 import { EditRecordRequest } from "@libs/client/types/dataTypes";
 import { queryMaker, tagMaker } from "@libs/client/utils";
 import {
@@ -80,7 +83,44 @@ const workTime = api.injectEndpoints({
         }
       },
     }),
+    deleteRecord: build.mutation<CommonResponse, DeleteRecordRequest>({
+      query: (args) => {
+        return {
+          url: `records`,
+          method: "DELETE",
+          body: args,
+        };
+      },
+      async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
+        const patched = dispatch(
+          api.util.updateQueryData(
+            //@ts-ignore
+            "getRecordWorkTimes",
+            undefined,
+            (draft: Draft<TempDraftResponse>) => {
+              const filtered = draft.records.filter((v) => !ids.includes(v.id));
+              draft.records = filtered;
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+          if (!data.success) {
+            console.log("success?");
+            patched.undo();
+          }
+        } catch {
+          console.log("error?");
+          patched.undo();
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetRecordWorkTimesQuery, useEditRecordMutation } = workTime;
+export const {
+  useDeleteRecordMutation,
+  useGetRecordWorkTimesQuery,
+  useEditRecordMutation,
+} = workTime;

@@ -5,17 +5,11 @@ import DateRecordRow from "@components/Row/DateRecordRow";
 import HeaderRow from "@components/Row/HeaderRow";
 import SearchInput from "@components/SearchInput";
 import SubSearch from "@components/SearchInput/SubSearch";
-import {
-  NameRecordAdminRowType,
-  NameRecordAdminHeaderRowType,
-  DateRecordAdminRowType,
-  DateRecordAdminHeaderRowType,
-  AdminRecordHeaderType,
-  UserRecordHeaderType,
-} from "@libs/client/types/dataTypes";
-import { useCallback, useMemo, useState } from "react";
 
-const record: NameRecordAdminRowType = {
+import { useCallback, useMemo, useState } from "react";
+import { useAppSelector } from "@libs/client/useRedux";
+
+const record = {
   no: 1,
   name: "pak",
   start: "10:22",
@@ -23,7 +17,7 @@ const record: NameRecordAdminRowType = {
   duration: "11:20",
 };
 
-const options: NameRecordAdminHeaderRowType = {
+const options = {
   no: { isSort: true, colSpan: 1 },
   name: { isSort: true, colSpan: 2 },
   start: { isSort: true, colSpan: 2 },
@@ -31,14 +25,14 @@ const options: NameRecordAdminHeaderRowType = {
   duration: { isSort: true, colSpan: 2 },
 };
 
-const record2: DateRecordAdminRowType = {
+const record2 = {
   no: 1,
   date: "2022-10-10",
   person: 10,
   durationAverage: 10,
 };
 
-const options2: DateRecordAdminHeaderRowType = {
+const options2 = {
   no: { isSort: true, colSpan: 1 },
   date: { isSort: true, colSpan: 2 },
   person: { isSort: true, colSpan: 2 },
@@ -46,7 +40,7 @@ const options2: DateRecordAdminHeaderRowType = {
 };
 
 const Search = () => {
-  const initAdminThead: AdminRecordHeaderType = useMemo(
+  const initAdminThead = useMemo(
     () => ({
       ["#"]: { colSpan: 1 },
       name: { sort: null, colSpan: 2 },
@@ -57,7 +51,7 @@ const Search = () => {
     []
   );
 
-  const initUserThead: UserRecordHeaderType = useMemo(
+  const initUserThead = useMemo(
     () => ({
       createdAt: { sort: null, colSpan: 3 },
       start: { sort: null, colSpan: 2 },
@@ -83,8 +77,13 @@ const Search = () => {
     setShowEditRecordModal(true);
   }, []);
 
+  const userRole = useAppSelector((state) => state.user.role);
+
   return (
-    <Layout>
+    <Layout
+      canGoBack={false}
+      title={userRole === "ADMIN" ? "기록검색" : "내 기록 검색"}
+    >
       {/* <EditRecordModal isShow={showEditRecordModal} onClose={onCloseModal} /> */}
       <article className="flex flex-col justify-center items-center px-5 w-full">
         <form className="space-y-4 w-[90%] sm:w-[60%]">
@@ -94,12 +93,12 @@ const Search = () => {
         <ul className="relative max-h-[80vh] w-full pb-10 px-5  divide-y-[1px] mt-5 overflow-y-auto text-sm rounded-md">
           {standard === "name" ? (
             <>
-              <HeaderRow options={options} />
+              {/* <HeaderRow options={options} /> */}
               {/* <NameRecordRow onClick={onRecord} data={record} /> */}
             </>
           ) : (
             <>
-              <HeaderRow options={options2} />
+              {/* <HeaderRow options={options2} /> */}
               {/* <DateRecordRow data={record2} /> */}
             </>
           )}

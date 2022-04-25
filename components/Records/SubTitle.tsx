@@ -1,15 +1,9 @@
 import { useMemo } from "react";
-import { NextPage } from "next";
-import { UserRecordType } from "@libs/server/types";
-import useSWR from "swr";
 import { format } from "date-fns";
+import { useGetRecordWorkTimesQuery } from "@store/services/records";
 
-interface props {
-  recordUrl: string;
-}
-
-const SubTitle: NextPage<props> = ({ recordUrl }) => {
-  const { data: records } = useSWR<UserRecordType>(recordUrl);
+const SubTitle = () => {
+  const { data: records } = useGetRecordWorkTimesQuery();
 
   const workingPeopleCount: number = useMemo(() => {
     return (

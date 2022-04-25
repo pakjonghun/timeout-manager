@@ -63,3 +63,7 @@ export type SelectedData = {
   end?: string | null;
   duration?: number | null;
 } & Omit<WithUserRecord, "start" | "end" | "duration">;
+
+export type DeleteRecordRequest = {
+  ids: number[];
+};

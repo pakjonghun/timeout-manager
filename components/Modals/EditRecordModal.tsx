@@ -10,10 +10,8 @@ import { useForm } from "react-hook-form";
 import { AnimatePresence } from "framer-motion";
 import useModal from "@libs/client/useModal";
 import { useAppSelector } from "@libs/client/useRedux";
-import {
-  useEditRecordMutation,
-  useGetRecordWorkTimesQuery,
-} from "@store/services/records";
+import { useEditRecordMutation } from "@store/services/records";
+import { toast } from "react-toastify";
 
 interface props {}
 
@@ -24,11 +22,9 @@ interface form {
 }
 
 const EditRecordModal: NextPage<props> = () => {
-  const { isShowModal, onHideModal } = useModal("userRecordEdit");
-  const { refetch } = useGetRecordWorkTimesQuery();
+  const { isShowModal, onHideModal } = useModal("recordEdit");
   const selectedData = useAppSelector((state) => state.record.selectdData);
-  const [editMutate, { isLoading, isError, isSuccess }] =
-    useEditRecordMutation();
+  const [editMutate, { isError, data }] = useEditRecordMutation();
   const {
     register,
     handleSubmit,
@@ -38,6 +34,12 @@ const EditRecordModal: NextPage<props> = () => {
   } = useForm<form>({
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (isError || (data && !data?.success)) {
+      toast.error("기록 수정이 실패했습니다.");
+    }
+  }, [isError, data]);
 
   const onValid = useCallback(
     (values: form) => {

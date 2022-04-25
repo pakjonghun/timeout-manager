@@ -2,23 +2,16 @@ import { ReactText } from "react";
 import { NextPage } from "next";
 import SubTitle from "./SubTitle";
 import LoadingButton from "@components/LoadingButton";
-import { MeType } from "@libs/server/types";
-import useSWR from "swr";
+import { useAppSelector } from "@libs/client/useRedux";
 
 interface props {
   isDeleted: boolean;
-  recordUrl: string;
   onDeleteModalShow: () => ReactText | undefined;
 }
 
-const SubMenu: NextPage<props> = ({
-  isDeleted,
-  recordUrl,
-  onDeleteModalShow,
-}) => {
-  const { data: me } = useSWR<MeType>("/api/users/me");
-
-  if (me?.user?.role !== "ADMIN") return null;
+const SubMenu: NextPage<props> = ({ isDeleted, onDeleteModalShow }) => {
+  const userRole = useAppSelector((state) => state.user.role);
+  if (userRole !== "ADMIN") return null;
 
   return (
     <div className="self-end flex justify-between">
@@ -31,7 +24,7 @@ const SubMenu: NextPage<props> = ({
           buttonName="Delete"
         />
       </div>
-      <SubTitle recordUrl={recordUrl} />
+      <SubTitle />
     </div>
   );
 };

@@ -38,7 +38,7 @@
   }
 
   .menu {
-    @apply font-md scale-md;
+    @apply font-md scale-md hover:text-blue-500;
   }
 
   .crossAlign {

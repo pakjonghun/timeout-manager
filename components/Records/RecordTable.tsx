@@ -14,8 +14,9 @@ import {
 import useSort from "@libs/client/useSort";
 import useModal from "@libs/client/useModal";
 import { WithUserRecord } from "@libs/server/types/dataTypes";
+import Spin from "@components/Spin";
 
-const AdminRecordTable = ({}) => {
+const RecordTable = ({}) => {
   const dispatch = useAppDispatch();
 
   const theads = useAppSelector((state) => state.record.theads);
@@ -44,7 +45,7 @@ const AdminRecordTable = ({}) => {
     [selectedIds, dispatch]
   );
 
-  const { onShowModal } = useModal("userRecordEdit");
+  const { onShowModal } = useModal("recordEdit");
 
   const onRowClick = useCallback(
     (event: React.MouseEvent, data: WithUserRecord) => {
@@ -72,7 +73,13 @@ const AdminRecordTable = ({}) => {
 
   if (isError) return null;
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin classes="w-28 h-28 fill-gray-200" />
+      </div>
+    );
+  }
 
   return (
     <ul className="px-5 relative pb-10 divide-y-[1px] mt-2 max-h-[80vh] text-sm rounded-md overflow-y-auto">
@@ -108,4 +115,4 @@ const AdminRecordTable = ({}) => {
   );
 };
 
-export default AdminRecordTable;
+export default RecordTable;

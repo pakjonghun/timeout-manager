@@ -5,21 +5,21 @@ import ModalButtons from "@components/Modals/ModalButtons";
 import { AnimatePresence } from "framer-motion";
 
 interface props {
-  showDeleteModal: boolean;
+  isShow: boolean;
   selectedDataCount: number;
   onClose: (event: React.MouseEvent<HTMLElement>) => void;
   onConfirm: () => void;
 }
 
 const RecordDeleteModal: NextPage<props> = ({
-  showDeleteModal,
+  isShow,
   selectedDataCount,
   onClose,
   onConfirm,
 }) => {
   return (
     <AnimatePresence>
-      {showDeleteModal && (
+      {isShow && (
         <Modal onClose={onClose}>
           <ModalTitle
             title="확인"

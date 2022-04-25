@@ -24,8 +24,12 @@ const Home = () => {
   const { data: workTimes } = useGetTimerWorkTimesQuery();
 
   useEffect(() => {
-    if (isStatusError || (data && !data?.success)) {
+    if (isStatusError) {
       toast.error("사용자 정보를 다시 받아오지 못했습니다.");
+    }
+
+    if (data && !data?.success) {
+      toast.error("관리자에 의해 초과근무가 삭제되었습니다.");
     }
   }, [data, isStatusError]);
 

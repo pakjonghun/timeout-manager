@@ -99,11 +99,30 @@ const handler = async (
       });
     }
   }
+
+  if (req.method === "DELETE") {
+    if (req.session.user?.role !== "ADMIN") {
+      return res.status(403).json({ success: false });
+    }
+
+    const ids = req.body.ids as number[];
+    if (!ids?.length) return res.status(400).json({ success: false });
+
+    await client.workTimes.deleteMany({
+      where: {
+        id: {
+          in: ids.map((id) => id),
+        },
+      },
+    });
+
+    return res.json({ success: true });
+  }
 };
 
 export default withCookie(
   withMethod({
-    methods: ["GET"],
+    methods: ["GET", "DELETE"],
     handler,
   })
 );
