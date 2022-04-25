@@ -1,11 +1,11 @@
 import gravatar from "gravatar";
-import { RecordRowHeaderType } from "./types/dataTypes";
 
 export const menus = [
   {
     name: (
       <svg
-        className="w-5 h-5 fill-gray-400"
+        // style={{ fill: "lightGray" }}
+        className="w-5 h-5 fill-gray-400 hover:fill-gray-600"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
       >
@@ -27,7 +27,7 @@ export const menus = [
   {
     name: (
       <svg
-        className="h-5 w-5 fill-gray-400"
+        className="h-5 w-5 fill-gray-400 hover:fill-gray-600"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
       >
@@ -37,9 +37,3 @@ export const menus = [
     link: "/api/users/logout",
   },
 ];
-
-export const timerRecordThead: RecordRowHeaderType = {
-  start: { colSpan: 1 },
-  end: { colSpan: 1 },
-  duration: { colSpan: 1 },
-};

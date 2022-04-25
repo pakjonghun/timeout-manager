@@ -3,7 +3,6 @@ import Layout from "@components/Layout";
 import HeaderRow from "@components/Row/HeaderRow";
 import TimerRecordRow from "@components/Row/TimerRecordRow";
 import TimeoutConfirmModal from "@components/Modals/TimeoutConfirmModal";
-import { timerRecordThead } from "@libs/client/constants";
 import { useCallback, useEffect, useMemo } from "react";
 import { useAppSelector } from "@libs/client/useRedux";
 import useModal from "@libs/client/useModal";
@@ -22,6 +21,9 @@ const Home = () => {
   const [endWorkMutate, { isError }] = useEndWorkMutation();
   const { isError: isStatusError, data } = useGetStatusQuery();
   const { data: workTimes } = useGetTimerWorkTimesQuery();
+  const timerRecordThead = useAppSelector(
+    (state) => state.record.theads.timerThead
+  );
 
   useEffect(() => {
     if (isStatusError) {

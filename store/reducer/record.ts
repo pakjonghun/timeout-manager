@@ -2,7 +2,6 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { SortValue, Thead } from "@libs/client/types";
 import { Role } from "@prisma/client";
-import { WithUserRecord } from "@libs/server/types/dataTypes";
 import { SelectedData } from "@libs/client/types/dataTypes";
 
 const sortValueObj = {
@@ -17,6 +16,12 @@ type AdminTheadKey = "#" | "name" | "start" | "end" | "duration";
 
 type TheadState = {
   [key: string]: Thead;
+};
+
+const timerThead: TheadState = {
+  start: { colSpan: 1 },
+  end: { colSpan: 1 },
+  duration: { colSpan: 1 },
 };
 
 const userThead: TheadState = {
@@ -35,7 +40,11 @@ const adminThead: TheadState = {
 };
 
 type RecordState = {
-  theads: { userThead: TheadState; adminThead: TheadState };
+  theads: {
+    userThead: TheadState;
+    adminThead: TheadState;
+    timerThead: TheadState;
+  };
   selectedIds: number[];
   isAllSelected: boolean;
   currentPage: number;
@@ -51,7 +60,7 @@ type SortPayload = {
 };
 
 const initialState: RecordState = {
-  theads: { userThead, adminThead },
+  theads: { userThead, adminThead, timerThead },
   selectedIds: [],
   isAllSelected: false,
   currentPage: 1,
