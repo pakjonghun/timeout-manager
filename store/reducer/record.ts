@@ -46,7 +46,6 @@ type RecordState = {
     timerThead: TheadState;
   };
   selectedIds: number[];
-  isAllSelected: boolean;
   currentPage: number;
   selectdData: SelectedData | null;
   currentSort: [string | null, SortValue | null];
@@ -62,7 +61,6 @@ type SortPayload = {
 const initialState: RecordState = {
   theads: { userThead, adminThead, timerThead },
   selectedIds: [],
-  isAllSelected: false,
   currentPage: 1,
   selectdData: null,
   currentSort: [null, null],
@@ -120,12 +118,18 @@ const recordSlice = createSlice({
     setSelectedData: (state, { payload }: PayloadAction<SelectedData>) => {
       state.selectdData = payload;
     },
+
+    reset: () => {
+      return initialState;
+    },
   },
 });
 
 export const {
   sort,
+  reset,
   addItem,
+
   nextPage,
   previousPage,
   removeItem,

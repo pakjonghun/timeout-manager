@@ -1,3 +1,6 @@
+import { CalendarSelect } from "@libs/client/types";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { resetDate, resetDates } from "@store/reducer/search";
 import { NextPage } from "next";
 import { useCallback, useState } from "react";
 import Calendar from "./Calendar";
@@ -5,15 +8,7 @@ import DatePickForm from "./Calendar/DatePickForm";
 import Select from "./Select";
 
 interface props {
-  year: number;
-  month: number;
-  dates: string[];
-  removeDates: (date: string) => void;
-  onDates: (date: string) => void;
   onClose: (event: React.MouseEvent) => void;
-  onYear: (year: number) => void;
-  onMonth: (month: number) => void;
-  resetDates: () => void;
 }
 
 const data = [
@@ -22,15 +17,7 @@ const data = [
   { name: "description", id: "duration" },
 ];
 
-const Filter: NextPage<props> = ({
-  year,
-  month,
-  dates,
-  resetDates,
-  onClose,
-  removeDates,
-  ...prop
-}) => {
+const Filter: NextPage<props> = ({ onClose }) => {
   const [standard, setStandard] = useState("Standard");
   const [selectList] = useState(data);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
@@ -53,16 +40,19 @@ const Filter: NextPage<props> = ({
     setIsSelectOpen(!isSelectOpen);
   }, [isSelectOpen]);
 
-  const [selectType, setSelectType] = useState("all");
+  const [selectType, setSelectType] = useState<CalendarSelect>("all");
+
+  const dispatch = useAppDispatch();
 
   const onSwitch = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      resetDates();
+      dispatch(resetDate());
       setSelectType(event.target.checked ? "sep" : "all");
     },
-    [resetDates]
+    [dispatch]
   );
 
+  const dates = useAppSelector((state) => state.search.dates);
   if (selectType === "all" && dates.length === 2) {
     const one = new Date(`${dates[0]} 00:00:00`).getTime();
     const other = new Date(`${dates[1]} 00:00:00`).getTime();
@@ -91,15 +81,9 @@ const Filter: NextPage<props> = ({
             </div>
             <Calendar
               selectType={selectType}
-              dates={dates}
               onSwitch={onSwitch}
-              removeDates={removeDates}
-              resetDates={resetDates}
               onCalendar={onCalendar}
               isCaneldarShow={isCaneldarShow}
-              year={year}
-              month={month}
-              {...prop}
             />
           </div>
           <div>
@@ -156,15 +140,12 @@ const Filter: NextPage<props> = ({
           </div>
           <Calendar
             selectType={selectType}
-            dates={dates}
+            // dates={dates}
             onSwitch={onSwitch}
-            removeDates={removeDates}
-            resetDates={resetDates}
+            // removeDates={removeDates}
+            // resetDates={resetDates}
             onCalendar={onCalendar}
             isCaneldarShow={isCaneldarShow}
-            year={year}
-            month={month}
-            {...prop}
           />
         </div>
         <div>

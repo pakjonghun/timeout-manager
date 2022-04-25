@@ -1,12 +1,16 @@
-import { NextPage } from "next";
+import { toggleFilter } from "@store/reducer/search";
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 
-interface props {
-  onFilterOpen: () => void;
-}
+const SearchInput = () => {
+  const dispatch = useDispatch();
 
-const SearchInput: NextPage<props> = ({ onFilterOpen }) => {
+  const toggleFilterFunc = useCallback(() => {
+    dispatch(toggleFilter());
+  }, [dispatch]);
+
   return (
-    <div className="flex items-center sm:p-[0.1rem] roundShadow-md border-gray-200 border-[1.5px] bg-gray-50 ring-gray-200 focus-within:ring-1">
+    <div className="flex items-center sm:p-[0.1rem] w-full roundShadow-md border-gray-200 border-[1.5px] bg-gray-50 ring-gray-200 focus-within:ring-1 z-50">
       <svg
         className="w-5 h-5 ml-2 fill-gray-400"
         xmlns="http://www.w3.org/2000/svg"
@@ -20,8 +24,8 @@ const SearchInput: NextPage<props> = ({ onFilterOpen }) => {
         className="w-full py-3 placeholder:text-gray-400 focus:ring-0 border-none bg-transparent text-sm"
       />
       <span
-        onClick={onFilterOpen}
-        className="inline-block mr-[0.3rem]  px-3 py-[0.4rem] bg-white rounded-md shadow-sm cursor-pointer font-md scale-md select-none border-[1px] text-gray-600"
+        onClick={toggleFilterFunc}
+        className="inline-block mr-[0.3rem]  px-3 py-[0.4rem] bg-white rounded-md shadow-sm cursor-pointer font-md scale-md select-none border-[1px] text-gray-600 z-50"
       >
         Filter
       </span>

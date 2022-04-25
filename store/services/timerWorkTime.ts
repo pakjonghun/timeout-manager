@@ -85,8 +85,10 @@ const workTime = api.injectEndpoints({
             "getTimerWorkTimes",
             undefined,
             (draft: Draft<TempTimerDraftType>) => {
-              draft.workTimes[0].end = end;
-              draft.workTimes[0].duration = duration;
+              if (draft.workTimes.length) {
+                draft.workTimes[0].end = end;
+                draft.workTimes[0].duration = duration;
+              }
             }
           )
         );

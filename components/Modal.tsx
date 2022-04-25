@@ -11,7 +11,7 @@ const Modal: NextPage<props> = ({ children, styles, onClose }) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 flex items-center justify-center w-full backdrop-blur-sm backdrop-brightness-50 z-20"
+      className="fixed inset-0 flex items-center justify-center w-full backdrop-blur-sm backdrop-brightness-50 z-[100]"
     >
       <motion.div
         initial={{ scale: 0 }}

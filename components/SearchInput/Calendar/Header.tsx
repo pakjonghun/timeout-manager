@@ -1,12 +1,12 @@
-import React, { useCallback, useState } from "react";
 import { NextPage } from "next";
 import Switch from "@components/Switch";
 import { getId } from "@libs/client/utils";
+import { CalendarSelect } from "@libs/client/types";
 
 interface props {
   year: number;
   month: number;
-  selectType: string;
+  selectType: CalendarSelect;
   onSwitch: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onYear: (year: number) => void;
   onMonth: (year: number) => void;

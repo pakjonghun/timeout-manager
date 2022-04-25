@@ -24,23 +24,23 @@ const workTime = api.injectEndpoints({
     getRecordWorkTimes: build.query<GetRecordResponse, void>({
       async queryFn(_, api, __, fetch) {
         const state = api.getState() as RootState;
+        const keyWord = state.search.keyWord;
         const page = state.record.currentPage;
+        const startDate = state.search.startDate;
+        const endDate = state.search.endDate;
         const [sortKey, sortValue] = state.record.currentSort;
-        let query;
-        switch (true) {
-          case !!sortKey && !!sortValue:
-            query = queryMaker([
-              { key: sortKey!, value: sortValue! },
-              { key: "page", value: page },
-            ]);
-            break;
 
-          default:
-            query = queryMaker([{ key: "page", value: page }]);
-            break;
+        const array = [];
+
+        if (endDate) array.push({ key: "endDate", value: endDate });
+        if (startDate) array.push({ key: "startDate", value: startDate });
+        if (keyWord) array.push({ key: "keyWord", value: keyWord });
+        if (sortKey && sortValue) {
+          array.push({ key: sortKey, value: sortValue });
         }
+        array.push({ key: "page", value: page });
 
-        const result = await fetch(`records?${query}`);
+        const result = await fetch(`records?${queryMaker(array)}`);
         if (result.data) return { data: result.data as WorkTimeResponse };
         else return { data: { success: false } };
       },

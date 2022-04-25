@@ -8,3 +8,5 @@ export type Thead = {
   sort?: SortValue | null;
   colSpan?: number;
 };
+
+export type CalendarSelect = "all" | "sep";

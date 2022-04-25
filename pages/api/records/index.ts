@@ -11,8 +11,18 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<GetRecordResponse>
 ) => {
-  const { page, createdAt, end, start, duration, name } =
-    req.query as GetRecordRequest;
+  const {
+    page,
+    createdAt,
+    end,
+    start,
+    duration,
+    name,
+    keyWord,
+    startDate,
+    endDate,
+    dates,
+  } = req.query as GetRecordRequest;
 
   if (req.method === "GET") {
     if (!page || +page < 1) return res.status(400).json({ success: false });
@@ -29,6 +39,23 @@ const handler = async (
       const records = await client.workTimes.findMany({
         where: {
           userId: req.session?.user?.id,
+          ...(keyWord && {
+            user: {
+              name: {
+                contains: keyWord,
+              },
+            },
+          }),
+          ...(startDate && {
+            createdAt: {
+              gte: new Date(startDate),
+            },
+          }),
+          ...(endDate && {
+            createdAt: {
+              lte: new Date(endDate),
+            },
+          }),
         },
         select: {
           id: true,

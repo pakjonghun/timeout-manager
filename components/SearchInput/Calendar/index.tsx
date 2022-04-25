@@ -1,38 +1,48 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { NextPage } from "next";
 import CalendarTHead from "./THead";
 import CalendarHeader from "./Header";
 import CalendarBody from "./CalendarBody";
 import { getMonthDateList } from "@libs/client/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAppDispatch } from "@libs/client/useRedux";
+import { resetDates } from "@store/reducer/search";
+import { CalendarSelect } from "@libs/client/types";
 
 interface props {
-  year: number;
-  month: number;
   isCaneldarShow: boolean;
-  dates: string[];
-  selectType: string;
+  selectType: CalendarSelect;
   onSwitch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  removeDates: (date: string) => void;
-  onDates: (date: string) => void;
-  onYear: (year: number) => void;
-  onMonth: (month: number) => void;
   onCalendar: () => void;
-  resetDates: () => void;
 }
 
 const Calendar: NextPage<props> = ({
   selectType,
+  isCaneldarShow,
   onSwitch,
-  dates,
-  onDates,
   onCalendar,
-  resetDates,
-  removeDates,
-  ...props
 }) => {
   const dayList = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-  const { year, month, isCaneldarShow } = props;
+
+  const [year, setYear] = useState(0);
+  const [month, setMonth] = useState(0);
+
+  useEffect(() => {
+    const today = new Date();
+    setYear(today.getFullYear());
+    setMonth(today.getMonth() + 1);
+  }, []);
+
+  const onYear = useCallback(
+    (year: number) => setYear((pre) => (year > 0 ? year : pre)),
+    []
+  );
+
+  const onMonth = useCallback(
+    (month: number) =>
+      setMonth((pre) => (month > 0 && month < 13 ? month : pre)),
+    []
+  );
 
   const [monthDateList, setMonthDateList] = useState(
     getMonthDateList(year, month)
@@ -42,11 +52,11 @@ const Calendar: NextPage<props> = ({
     setMonthDateList(getMonthDateList(year, month));
   }, [year, month]);
 
-  const onDateChange = (event: React.FormEvent<HTMLDivElement>) => {
-    const value = (event.target as HTMLInputElement).value;
-    if (dates.includes(value)) return removeDates(value);
-    onDates(value);
-  };
+  const dispatch = useAppDispatch();
+  const onCancelClick = useCallback(() => {
+    dispatch(resetDates());
+    onCalendar();
+  }, [dispatch, onCalendar]);
 
   if (!isCaneldarShow) return null;
 
@@ -61,15 +71,15 @@ const Calendar: NextPage<props> = ({
         <CalendarHeader
           onSwitch={onSwitch}
           selectType={selectType}
-          {...props}
+          onYear={onYear}
+          onMonth={onMonth}
+          year={year}
+          month={month}
         />
         <CalendarTHead data={dayList} />
         {monthDateList.map((v, i) => (
           <CalendarBody
-            onDateChange={onDateChange}
             selectType={selectType}
-            dates={dates}
-            idxLen={[i, monthDateList.length]}
             key={`${year}-${month}-${i}`}
             date={v}
             month={month}
@@ -78,10 +88,7 @@ const Calendar: NextPage<props> = ({
         <div className="grid grid-cols-2 gap-5">
           <button
             type="button"
-            onClick={() => {
-              resetDates();
-              onCalendar();
-            }}
+            onClick={onCancelClick}
             className="py-2 px-5 bg-gray-50 text-gray-500 roundShadow-md font-medium text-sm scale"
           >
             Cancel

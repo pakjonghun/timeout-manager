@@ -43,12 +43,16 @@ export type GetWorkTimesRequest = {
 };
 
 export type GetRecordRequest = {
+  keyWord?: string;
   page: string;
   createdAt?: SortValue;
   end?: SortValue;
   start?: SortValue;
   duration?: SortValue;
   name?: SortValue;
+  startDate?: string;
+  endDate?: string;
+  dates?: string[];
 };
 
 export type EditRecordRequest = {

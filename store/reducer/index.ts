@@ -4,6 +4,7 @@ import workTime from "./workTime";
 import modal from "./modal";
 import record from "./record";
 import user from "./user";
+import search from "./search";
 
 const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   modal,
   record,
   user,
+  search,
 });
 
 export default rootReducer;
