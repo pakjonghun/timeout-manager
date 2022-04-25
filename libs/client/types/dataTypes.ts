@@ -1,3 +1,4 @@
+import { WithUserRecord } from "@libs/server/types/dataTypes";
 import { SortValue } from "./index";
 
 export type LoginRequest = {
@@ -49,3 +50,16 @@ export type GetRecordRequest = {
   duration?: SortValue;
   name?: SortValue;
 };
+
+export type EditRecordRequest = {
+  id: number;
+  start: string;
+  end?: string;
+  duration?: number;
+};
+
+export type SelectedData = {
+  start: string;
+  end?: string | null;
+  duration?: number | null;
+} & Omit<WithUserRecord, "start" | "end" | "duration">;

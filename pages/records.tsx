@@ -8,10 +8,10 @@ import PageNationButtons from "@components/PageNationButtons";
 import useSort from "@libs/client/useSort";
 import useModal from "@libs/client/useModal";
 import useMutation from "@libs/client/useMutation";
-import usePagnation from "@libs/client/usePagnation";
+import usePagnation from "@libs/client/usePage";
 import { joinStyleClass } from "@libs/client/utils";
 
-import usePage from "@libs/client/usePagnation";
+import usePage from "@libs/client/usePage";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 
@@ -135,9 +135,11 @@ const Record = () => {
   //   dispatch(setQuery({ key: "recordQuery", query: `${url.toString()}` }));
   // }, [currentSort, currentPage, dispatch]);
 
+  const { page, totalPage, onNextPage, onPreviousPage } = usePage();
+
   return (
     <Layout title="초과근무 내역" canGoBack={false}>
-      {/* <EditRecordModal /> */}
+      <EditRecordModal />
 
       {/* <RecordDeleteModal
         onClose={onDeleteModalClose}
@@ -162,12 +164,12 @@ const Record = () => {
 
       <AdminRecordTable />
 
-      {/* <PageNationButtons
+      <PageNationButtons
         page={page}
         totalPage={totalPage}
         onNextPage={onNextPage}
         onPrePage={onPreviousPage}
-      /> */}
+      />
       {/* </div> */}
     </Layout>
   );

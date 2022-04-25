@@ -2,6 +2,14 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { SortValue, Thead } from "@libs/client/types";
 import { Role } from "@prisma/client";
+import { WithUserRecord } from "@libs/server/types/dataTypes";
+import { SelectedData } from "@libs/client/types/dataTypes";
+
+const sortValueObj = {
+  ["null" as string]: "asc",
+  asc: "desc",
+  desc: "asc",
+};
 
 type UserTheadKey = "createdAt" | "start" | "end" | "duration";
 
@@ -26,12 +34,13 @@ const adminThead: TheadState = {
   duration: { sort: null, colSpan: 2 },
 };
 
-type AdminRecordState = {
+type RecordState = {
   theads: { userThead: TheadState; adminThead: TheadState };
   selectedIds: number[];
   isAllSelected: boolean;
   currentPage: number;
-  currentSort: [string | null, string | null];
+  selectdData: SelectedData | null;
+  currentSort: [string | null, SortValue | null];
 };
 
 export type SortKey = UserTheadKey | AdminTheadKey;
@@ -41,15 +50,12 @@ type SortPayload = {
   sortKey: UserTheadKey | AdminTheadKey;
 };
 
-type NextPage = {
-  totalPage: number;
-};
-
-const initialState: AdminRecordState = {
+const initialState: RecordState = {
   theads: { userThead, adminThead },
   selectedIds: [],
   isAllSelected: false,
   currentPage: 1,
+  selectdData: null,
   currentSort: [null, null],
 };
 
@@ -61,24 +67,21 @@ const recordSlice = createSlice({
       const { userRole, sortKey } = payload;
       switch (userRole) {
         case "ADMIN":
-          const adminSortValue = getSortValue(state.theads.adminThead, sortKey);
-          state.theads.userThead = getSortedThead({
-            sortKey,
-            sortValue: adminSortValue,
-            thead: { ...adminThead },
-          });
-          state.currentSort = [sortKey, adminSortValue];
+          const [key] = state.currentSort;
+          const adminValue = getSortValue(state.currentSort[1]);
+          const thead = state.theads.adminThead;
+          if (key) thead[key].sort = null;
+          thead[sortKey].sort = adminValue;
+          state.currentSort = [sortKey, adminValue];
           break;
 
         case "USER":
-          const userSortValue = getSortValue(state.theads.userThead, sortKey);
-          state.theads.userThead = getSortedThead({
-            sortKey,
-            sortValue: userSortValue,
-            thead: { ...userThead },
-          });
-
-          state.currentSort = [sortKey, userSortValue];
+          const [userKey] = state.currentSort;
+          const userValue = getSortValue(state.currentSort[1]);
+          const userThead = state.theads.userThead;
+          if (userKey) userThead[userKey].sort = null;
+          userThead[sortKey].sort = userValue;
+          state.currentSort = [sortKey, userValue];
           break;
 
         default:
@@ -97,38 +100,34 @@ const recordSlice = createSlice({
     clearAll: (state) => {
       state.selectedIds = [];
     },
-    nextPage: (state, { payload }: PayloadAction<NextPage>) => {
-      if (payload.totalPage > state.currentPage) {
+    nextPage: (state, { payload: totalPage }: PayloadAction<number>) => {
+      if (totalPage > state.currentPage) {
         state.currentPage = state.currentPage + 1;
       }
     },
     previousPage: (state) => {
       if (state.currentPage) state.currentPage = state.currentPage - 1;
     },
+    setSelectedData: (state, { payload }: PayloadAction<SelectedData>) => {
+      state.selectdData = payload;
+    },
   },
 });
 
-export const { sort, addItem, removeItem, selectAll, clearAll } =
-  recordSlice.actions;
+export const {
+  sort,
+  addItem,
+  nextPage,
+  previousPage,
+  removeItem,
+  selectAll,
+  clearAll,
+  setSelectedData,
+} = recordSlice.actions;
 
 export default recordSlice.reducer;
 
-type GetSortTheadArgs = {
-  sortKey: string;
-  sortValue: SortValue;
-  thead: TheadState;
-};
-
-function getSortedThead({ sortKey, sortValue, thead }: GetSortTheadArgs) {
-  Object.keys(thead).forEach((key) => {
-    thead[key].sort = null;
-    if (key === sortKey) thead[key].sort = sortValue;
-  });
-
-  return thead;
-}
-
-function getSortValue(thead: TheadState, sortKey: string) {
-  const curSort = thead[sortKey].sort;
-  return curSort === "asc" ? "desc" : !curSort ? "asc" : "desc";
+function getSortValue(curValue: SortValue | null) {
+  const nextSort = sortValueObj[curValue || "null"] as SortValue;
+  return nextSort;
 }

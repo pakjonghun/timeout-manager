@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useAppDispatch } from "@libs/client/useRedux";
 import { useAppSelector } from "./useRedux";
-import { hideModal, ModalType, showModal } from "./../../store/reducer/modal";
+import { hideModal, Modal, showModal } from "./../../store/reducer/modal";
 
 type OnHideModalType = (
   event?: React.MouseEvent<HTMLElement>,
@@ -16,7 +16,7 @@ type UseModalReturnType = {
   onHideModal: OnHideModalType;
 };
 
-const useModal = (modalType: ModalType): UseModalReturnType => {
+const useModal = (modalType: Modal): UseModalReturnType => {
   const dispatch = useAppDispatch();
   const isShowModal = useAppSelector((state) => state.modal[modalType]);
 

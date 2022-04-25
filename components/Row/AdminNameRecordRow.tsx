@@ -1,13 +1,14 @@
 import { NextPage } from "next";
 import { getDuration, joinStyleClass } from "@libs/client/utils";
 import { format } from "date-fns";
+import { WithUserRecord } from "@libs/server/types/dataTypes";
 
 interface props {
-  data: UserRecordWithUser;
+  data: WithUserRecord;
   isPickable?: boolean;
   isSelected: boolean;
   onSelect: (event: React.MouseEvent<HTMLLIElement>) => void;
-  onClick: (event: React.MouseEvent, data: UserRecordWithUser) => void;
+  onClick: (event: React.MouseEvent, data: WithUserRecord) => void;
   styles?: React.CSSProperties;
 }
 
@@ -20,6 +21,7 @@ const AdminNameRecordRow: NextPage<props> = ({
   onSelect,
 }) => {
   const { start, end, duration, user, id } = data;
+
   return (
     <li
       onChange={onSelect}

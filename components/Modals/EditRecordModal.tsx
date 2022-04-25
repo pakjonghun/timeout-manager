@@ -5,13 +5,15 @@ import Modal from "@components/Modal";
 import ModalTitle from "@components/ModalTitle";
 import ErrorMessage from "@components/ErrorMessage";
 import ModalButtons from "./ModalButtons";
-import useMutation, { FetchType } from "@libs/client/useMutation";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { AnimatePresence } from "framer-motion";
 import useModal from "@libs/client/useModal";
-import { useGetRecordsByPageQuery } from "@store/services/record";
 import { useAppSelector } from "@libs/client/useRedux";
+import {
+  useEditRecordMutation,
+  useGetRecordWorkTimesQuery,
+} from "@store/services/records";
 
 interface props {}
 
@@ -23,12 +25,10 @@ interface form {
 
 const EditRecordModal: NextPage<props> = () => {
   const { isShowModal, onHideModal } = useModal("userRecordEdit");
-  const query = useAppSelector((state) => state.query.recordQuery);
-  const { refetch } = useGetRecordsByPageQuery(query);
-  const selectedData = useAppSelector(
-    (state) => state.adminRecord.selectedData
-  );
-
+  const { refetch } = useGetRecordWorkTimesQuery();
+  const selectedData = useAppSelector((state) => state.record.selectdData);
+  const [editMutate, { isLoading, isError, isSuccess }] =
+    useEditRecordMutation();
   const {
     register,
     handleSubmit,
@@ -39,10 +39,9 @@ const EditRecordModal: NextPage<props> = () => {
     mode: "onChange",
   });
 
-  const [mutation] = useMutation({ url: "/api/times" });
-
   const onValid = useCallback(
     (values: form) => {
+      if (!selectedData) return;
       const { startTime, endTime, date } = values;
 
       let end, duration;
@@ -50,13 +49,19 @@ const EditRecordModal: NextPage<props> = () => {
       if (endTime) {
         end = new Date(`${date} ${endTime}`);
         duration = end.getTime() - start.getTime();
-        mutation({ start, end, duration, id: selectedData?.id }, () => {
-          refetch();
-          onHideModal();
-        });
       }
+
+      const payload = {
+        id: selectedData.id,
+        start: start.toString(),
+        ...(end && { end: end.toString() }),
+        ...(duration && { duration: duration }),
+      };
+
+      editMutate(payload);
+      onHideModal();
     },
-    [selectedData, refetch, onHideModal, mutation]
+    [selectedData, onHideModal, editMutate]
   );
 
   useEffect(() => {

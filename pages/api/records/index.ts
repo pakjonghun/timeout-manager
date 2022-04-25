@@ -35,7 +35,6 @@ const handler = async (
           start: true,
           end: true,
           duration: true,
-          createdAt: true,
         },
         take: pageTake,
         skip: (+page - 1) * pageTake,
@@ -69,7 +68,6 @@ const handler = async (
           start: true,
           end: true,
           duration: true,
-          createdAt: true,
           user: {
             select: {
               id: true,
@@ -101,48 +99,11 @@ const handler = async (
       });
     }
   }
-
-  if (req.method === "DELETE") {
-    if (req.session.user?.role !== "ADMIN") {
-      return res.status(403).json({ success: false });
-    }
-    const ids = req.body.ids as string[];
-    if (!ids?.length) return res.status(400).json({ success: false });
-
-    await client.workTimes.deleteMany({
-      where: {
-        id: {
-          in: ids.map((v) => +v),
-        },
-      },
-    });
-
-    return res.json({ success: true });
-  }
-
-  if (req.method === "PATCH") {
-    const { id, start, end, duration } = req.body;
-    const data = {
-      ...(id && { id }),
-      ...(start && { start }),
-      ...(end && { end }),
-      ...(duration && { duration }),
-    };
-    await client.workTimes.update({
-      where: {
-        id,
-      },
-      data,
-    });
-
-    return res.json({ success: true });
-  }
 };
 
 export default withCookie(
   withMethod({
-    methods: ["GET", "POST", "DELETE", "PATCH"],
+    methods: ["GET"],
     handler,
-    isPrivate: false,
   })
 );

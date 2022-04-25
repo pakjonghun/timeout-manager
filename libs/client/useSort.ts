@@ -1,30 +1,38 @@
 import { useAppDispatch } from "./useRedux";
-import { useGetMeQuery } from "@store/services/user";
-import { useCallback } from "react";
-import { SortType } from "@libs/server/types";
+import { useCallback, useEffect } from "react";
 import { useAppSelector } from "@libs/client/useRedux";
-import { AdminRecordHeaderType, UserRecordHeaderType } from "./types/dataTypes";
-import { sort } from "@store/reducer/userRecordReducer";
-import { sort as adminSort } from "@store/reducer/adminRecordReducer";
-import { useDispatch } from "react-redux";
-import { ActionCreatorWithoutPayload, createAction } from "@reduxjs/toolkit";
+import { sort, SortKey } from "@store/reducer/record";
+import { useGetRecordWorkTimesQuery } from "@store/services/records";
 
-const useSort = (actionKey: string) => {
+const useSort = () => {
   const dispatch = useAppDispatch();
-
   const userRole = useAppSelector((state) => state.user.role);
 
-  const onSort = useCallback((event: React.FormEvent<HTMLElement>) => {
-    if (!userRole) return;
-    const target = event.target as HTMLInputElement;
-    if (target.id === "allSelectBoxLabel") return;
+  const { refetch } = useGetRecordWorkTimesQuery();
+  const sortKey = useAppSelector((state) => state.record.currentSort[0]);
+  const sortValue = useAppSelector((state) => state.record.currentSort[1]);
 
-    const action = createAction(actionKey);
-    const payload = { sortKey: target.value, userRole };
-    dispatch(action());
-  }, []);
+  useEffect(() => {
+    refetch();
+  }, [sortKey, sortValue, refetch]);
 
-  return onSort;
+  const onSortClick = useCallback(
+    (event: React.FormEvent<HTMLElement>) => {
+      if (!userRole) return;
+
+      const target = event.target as HTMLInputElement;
+      if (target.id === "allSelectBoxLabel") return;
+
+      const payload = {
+        sortKey: target.value as SortKey,
+        userRole,
+      };
+      dispatch(sort(payload));
+    },
+    [userRole, dispatch]
+  );
+
+  return onSortClick;
 };
 
 export default useSort;

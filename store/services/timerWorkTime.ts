@@ -1,15 +1,13 @@
-import { RootState } from "./../index";
 import { api, Tags } from "./index";
-import { queryMaker, tagMaker } from "./../../libs/client/utils";
+import { tagMaker } from "../../libs/client/utils";
 import {
   WorkTimesResponseTimes,
   WorkTimeResponse,
 } from "../../libs/server/types/dataTypes";
 import {
-  GetWorkTimesRequest,
   StartWorkRequest,
   EndWorkRequest,
-} from "./../../libs/client/types/dataTypes";
+} from "../../libs/client/types/dataTypes";
 import { Draft } from "@reduxjs/toolkit";
 
 type TempTimerDraftType = {
@@ -104,39 +102,11 @@ const workTime = api.injectEndpoints({
       },
       invalidatesTags: ["MyStatus"],
     }),
-    getRecordWorkTimes: build.query<WorkTimeResponse, void>({
-      async queryFn(_, api, __, fetch) {
-        const state = api.getState() as RootState;
-        const page = state.record.currentPage;
-        const [sortKey, sortValue] = state.record.currentSort;
-        let query;
-        switch (true) {
-          case !!sortKey && !!sortValue:
-            query = queryMaker([
-              { key: sortKey!, value: sortValue! },
-              { key: "page", value: page },
-            ]);
-            break;
-
-          default:
-            query = queryMaker([{ key: "page", value: page }]);
-            break;
-        }
-
-        const result = await fetch(`worktimes?${query}`);
-        if (result.data) return { data: result.data as WorkTimeResponse };
-        else return { data: { success: false } };
-      },
-
-      providesTags: (result) =>
-        tagMaker<WorkTimesResponseTimes, Tags>(result?.workTimes, "WorkTime"),
-    }),
   }),
 });
 
 export const {
   useGetTimerWorkTimesQuery,
-  useGetRecordWorkTimesQuery,
   useStartWorkMutation,
   useEndWorkMutation,
 } = workTime;

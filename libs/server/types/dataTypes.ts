@@ -26,7 +26,10 @@ export type MyDetailInfoResponse = {
 
 export type MeResponse = MyStatusResponse | MyDetailInfoResponse;
 
-type WithUserRecord = Omit<WorkTimes, "userId" | "updatedAt"> & {
+export type WithUserRecord = Omit<
+  WorkTimes,
+  "createdAt" | "userId" | "updatedAt"
+> & {
   user?: Omit<Users, "createdAt" | "updatedAt">;
 };
 

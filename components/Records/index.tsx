@@ -8,7 +8,7 @@ import PageNationButtons from "@components/PageNationButtons";
 import useSort from "@libs/client/useSort";
 import useModal from "@libs/client/useModal";
 import useMutation from "@libs/client/useMutation";
-import usePagnation from "@libs/client/usePagnation";
+import usePagnation from "@libs/client/usePage";
 import { joinStyleClass } from "@libs/client/utils";
 import {
   AdminRecordHeaderType,

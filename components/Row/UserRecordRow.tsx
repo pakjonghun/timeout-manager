@@ -1,10 +1,10 @@
 import { NextPage } from "next";
-import { UserRecord } from "@libs/server/types";
 import { getDuration, joinStyleClass } from "@libs/client/utils";
 import { format } from "date-fns";
+import { WorkTimes } from "@prisma/client";
 
 interface props {
-  data: UserRecord;
+  data: Pick<WorkTimes, "id" | "end" | "start" | "duration">;
   isPickable?: boolean;
   styles?: React.CSSProperties;
   onClick?: () => void;
@@ -16,8 +16,9 @@ const NameRecordRow: NextPage<props> = ({
   isPickable,
   onClick,
 }) => {
-  const { start, end, duration, createdAt } = data;
+  const { start, end, duration } = data;
 
+  console.log(data);
   if (!end || !duration) return null;
 
   return (
@@ -30,7 +31,7 @@ const NameRecordRow: NextPage<props> = ({
       )}
     >
       <span className="col-span-3 font-md">
-        {format(new Date(createdAt), "yyyy-MM-dd")}
+        {format(new Date(start), "yyyy-MM-dd")}
       </span>
       <span className="col-span-2 font-md">
         {format(new Date(start), "HH:mm")}

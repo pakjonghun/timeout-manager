@@ -13,7 +13,7 @@ import { useGetStatusQuery } from "@store/services/user";
 import {
   useEndWorkMutation,
   useGetTimerWorkTimesQuery,
-} from "@store/services/workTime";
+} from "@store/services/timerWorkTime";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
