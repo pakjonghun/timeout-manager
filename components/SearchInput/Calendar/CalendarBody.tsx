@@ -27,12 +27,14 @@ const CalendarBody: NextPage<props> = ({ selectType, date, month }) => {
     const value = (event.target as HTMLInputElement).value;
     switch (selectType) {
       case "all":
-        if (endDate) {
+        if (endDate && endDate !== value) {
           dispatch(setStartDate(value));
           dispatch(setEndDate(""));
         } else {
           if (!startDate) dispatch(setStartDate(value));
-          else dispatch(setEndDate(value));
+          else {
+            if (startDate !== value) dispatch(setEndDate(value));
+          }
         }
 
         break;

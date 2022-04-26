@@ -41,7 +41,6 @@ const workTime = api.injectEndpoints({
           array.push({ key: sortKey, value: sortValue });
         }
         array.push({ key: "page", value: page });
-        console.log("array", array);
         const result = await fetch(`records?${queryMaker(array)}`);
         if (result.data) return { data: result.data as WorkTimeResponse };
         else return { data: { success: false } };
@@ -109,11 +108,9 @@ const workTime = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           if (!data.success) {
-            console.log("success?");
             patched.undo();
           }
         } catch {
-          console.log("error?");
           patched.undo();
         }
       },

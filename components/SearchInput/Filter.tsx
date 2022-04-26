@@ -13,6 +13,7 @@ import DatePickForm from "./Calendar/DatePickForm";
 import Select from "./Select";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
 import { format } from "date-fns";
+import { useGetRecordsByDayQuery } from "@store/services/search";
 
 interface props {
   onClose: (event: React.MouseEvent) => void;
@@ -25,7 +26,7 @@ const Filter: NextPage<props> = ({ onClose }) => {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isCaneldarShow, setIsCalendarShow] = useState(false);
 
-  const onTerm = useCallback(
+  const onStandardSelect = useCallback(
     (event: React.FormEvent<HTMLUListElement>) => {
       const value = (event.target as HTMLInputElement).value as RecordStandard;
       setTempStandard(value);
@@ -54,12 +55,15 @@ const Filter: NextPage<props> = ({ onClose }) => {
   );
 
   const { refetch } = useGetRecordWorkTimesQuery();
+  const { refetch: refetchByDay } = useGetRecordsByDayQuery();
 
   const onApply = useCallback(() => {
     dispatch(setStandard(tempStandard));
     dispatch(hideFilter());
-    refetch();
-  }, [tempStandard, refetch, dispatch]);
+
+    if (tempStandard === "name") refetch();
+    else refetchByDay();
+  }, [tempStandard, refetchByDay, refetch, dispatch]);
 
   const startDate = useAppSelector((state) => state.search.startDate) || "";
   const endDate = useAppSelector((state) => state.search.endDate) || "";
@@ -134,7 +138,7 @@ const Filter: NextPage<props> = ({ onClose }) => {
             <Select
               selectOption={tempStandard}
               isSelectOpen={isSelectOpen}
-              onSelect={onTerm}
+              onSelect={onStandardSelect}
               onToggleOption={onToggleSelect}
             />
           </div>

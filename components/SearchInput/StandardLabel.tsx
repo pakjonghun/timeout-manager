@@ -8,7 +8,6 @@ interface props {
 }
 
 const StandardLabel: NextPage<props> = ({ name, id, classes }) => {
-  console.log("selected", id);
   return (
     <label htmlFor={id}>
       <span

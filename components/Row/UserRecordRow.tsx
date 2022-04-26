@@ -18,7 +18,6 @@ const NameRecordRow: NextPage<props> = ({
 }) => {
   const { start, end, duration } = data;
 
-  console.log(data);
   if (!end || !duration) return null;
 
   return (

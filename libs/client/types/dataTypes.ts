@@ -74,6 +74,9 @@ export type DeleteRecordRequest = {
 };
 
 export type GetRecordByDayRequest = {
+  startDate?: string;
+  endDate?: string;
+  dates?: string[];
   page: string;
   day?: SortValue;
   end?: SortValue;

@@ -1,29 +1,39 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HeaderRow from "@components/Row/HeaderRow";
 import UserRecordRow from "@components/Row/UserRecordRow";
 import RecordByDay from "@components/Row/RecordByDay";
-import { useAppSelector } from "@libs/client/useRedux";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import useSort from "@libs/client/useSort";
 import Spin from "@components/Spin";
 import { useGetRecordsByDayQuery } from "@store/services/search";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import { setDates, setStandard } from "@store/reducer/search";
+import { useGetRecordWorkTimesQuery } from "@store/services/records";
 
 const RecordTable = ({}) => {
   const onSortClick = useSort("day");
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
   const theads = useAppSelector((state) => state.record.theads);
   const userRole = useAppSelector((state) => state.user.role);
   const { data: records, isLoading, isError } = useGetRecordsByDayQuery();
+  const { refetch } = useGetRecordWorkTimesQuery();
 
   const onRowClick = useCallback(
     (day: string) => {
-      router.push(`/records/${day}`);
+      dispatch(setStandard("name"));
+      dispatch(setDates(day));
+      refetch();
     },
-    [router]
+    [refetch, dispatch]
   );
 
-  if (userRole !== "ADMIN") router.push("/");
+  if (userRole !== "ADMIN") {
+    toast.warn("당신은 관리자가 아닙니다.");
+    router.push("/");
+  }
 
   if (!records?.records) return null;
 

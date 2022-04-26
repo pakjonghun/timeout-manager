@@ -6,6 +6,7 @@ import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
 import client from "@libs/server/client";
 import { GetRecordByDayResponse } from "@libs/server/types/dataTypes";
+import { addDays } from "date-fns";
 
 const handler = async (
   req: NextApiRequest,
@@ -18,6 +19,9 @@ const handler = async (
   }
 
   const {
+    dates,
+    startDate,
+    endDate,
     keyWord,
     page,
     day = "asc",
@@ -28,16 +32,40 @@ const handler = async (
 
   if (!page) return res.status(400).json({ success: false });
 
-  const searchCondition = keyWord && {
+  const OR = [] as { createdAt: { gte: Date; lte: Date } }[];
+
+  if (dates) {
+    const parsed = JSON.parse(dates.toString()) as string[];
+    parsed.forEach((date) => {
+      const obj = {
+        createdAt: {
+          gte: new Date(date),
+          lte: addDays(new Date(date), 1),
+        },
+      };
+
+      OR.push(obj);
+    });
+  }
+
+  const records = await client.workTimes.groupBy({
+    by: ["day"],
     where: {
       user: {
         name: keyWord,
       },
+      ...(startDate && {
+        createdAt: {
+          gte: new Date(startDate),
+        },
+      }),
+      ...(endDate && {
+        createdAt: {
+          lte: addDays(new Date(endDate), 1),
+        },
+      }),
+      ...(OR.length && { OR }),
     },
-  };
-  const records = await client.workTimes.groupBy({
-    by: ["day"],
-    ...searchCondition,
     orderBy: {
       day,
       ...((end || start) && {
@@ -64,8 +92,6 @@ const handler = async (
   });
 
   const totalPage = Math.ceil(records.length / pageTake);
-
-  console.log(records);
   res.json({ success: true, records, totalPage });
 };
 

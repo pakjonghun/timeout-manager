@@ -104,11 +104,14 @@ const handler = async (
       });
     }
 
+    const isAdmin = req.session?.user?.role === "ADMIN";
     const records = await client.workTimes.findMany({
       where: {
-        start: {
-          gte: getCanStartTime(),
-        },
+        ...(!isAdmin && {
+          start: {
+            gte: getCanStartTime(),
+          },
+        }),
         ...searchCondition,
         ...(OR.length && { OR }),
       },

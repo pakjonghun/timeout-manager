@@ -1,8 +1,7 @@
 import Layout from "@components/Layout";
 import RecordByDay from "@components/RecordByDay";
 import SearchInput from "@components/SearchInput";
-import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { useAppSelector } from "@libs/client/useRedux";
 import Records from "@components/Records";
 import { joinStyleClass } from "@libs/client/utils";
 
