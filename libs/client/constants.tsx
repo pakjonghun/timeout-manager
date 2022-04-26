@@ -37,3 +37,8 @@ export const menus = [
     link: "/api/users/logout",
   },
 ];
+
+export const standardList = [
+  { name: "standard", id: "name" },
+  { name: "standard", id: "date" },
+];

@@ -1,4 +1,4 @@
-import { Users, WorkTimes } from "@prisma/client";
+import { Prisma, Users, WorkTimes } from "@prisma/client";
 
 export type CommonResponse = {
   success: boolean;
@@ -28,14 +28,32 @@ export type MeResponse = MyStatusResponse | MyDetailInfoResponse;
 
 export type WithUserRecord = Omit<
   WorkTimes,
-  "createdAt" | "userId" | "updatedAt"
+  "createdAt" | "userId" | "updatedAt" | "day"
 > & {
   user?: Omit<Users, "createdAt" | "updatedAt">;
-};
+} & { day?: string };
 
 export type GetRecordResponse = {
   records?: WithUserRecord[];
   success: boolean;
   totalPage?: number;
   totalCount?: number;
+} & CommonResponse;
+
+export type RecordByDay = Prisma.PickArray<
+  Prisma.WorkTimesGroupByOutputType,
+  "day"[]
+> & {
+  _avg: {
+    duration: number | null;
+  };
+  _count: {
+    end: number;
+    start: number;
+  };
+};
+
+export type GetRecordByDayResponse = {
+  records?: RecordByDay[];
+  totalPage?: number;
 } & CommonResponse;

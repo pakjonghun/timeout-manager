@@ -29,17 +29,19 @@ const workTime = api.injectEndpoints({
         const startDate = state.search.startDate;
         const endDate = state.search.endDate;
         const [sortKey, sortValue] = state.record.currentSort;
+        const dates = state.search.dates;
 
         const array = [];
 
         if (endDate) array.push({ key: "endDate", value: endDate });
         if (startDate) array.push({ key: "startDate", value: startDate });
         if (keyWord) array.push({ key: "keyWord", value: keyWord });
+        if (dates) array.push({ key: "dates", value: JSON.stringify(dates) });
         if (sortKey && sortValue) {
           array.push({ key: sortKey, value: sortValue });
         }
         array.push({ key: "page", value: page });
-
+        console.log("array", array);
         const result = await fetch(`records?${queryMaker(array)}`);
         if (result.data) return { data: result.data as WorkTimeResponse };
         else return { data: { success: false } };

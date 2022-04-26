@@ -18,13 +18,12 @@ import Spin from "@components/Spin";
 
 const RecordTable = ({}) => {
   const dispatch = useAppDispatch();
+  const onSortClick = useSort();
 
   const theads = useAppSelector((state) => state.record.theads);
   const selectedIds = useAppSelector((state) => state.record.selectedIds);
   const userRole = useAppSelector((state) => state.user.role);
   const { data: records, isLoading, isError } = useGetRecordWorkTimesQuery();
-
-  const onSortClick = useSort();
 
   const onSelectAll = useCallback(() => {
     if (!records || !records?.records) return;

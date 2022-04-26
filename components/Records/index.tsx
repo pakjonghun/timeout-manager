@@ -15,15 +15,10 @@ import { NextPage } from "next";
 
 interface props {
   isSubMenuShow?: boolean;
-  children?: React.ReactNode;
   classes?: string;
 }
 
-const Record: NextPage<props> = ({
-  isSubMenuShow = true,
-  classes,
-  children,
-}) => {
+const Record: NextPage<props> = ({ isSubMenuShow = true, classes }) => {
   const dispatch = useAppDispatch();
   const selectedIds = useAppSelector((state) => state.record.selectedIds);
   const userRole = useAppSelector((state) => state.user.role);
@@ -61,7 +56,6 @@ const Record: NextPage<props> = ({
           : "grid-rows-[70vh,3vh]"
       )}
     >
-      {children}
       {isSubMenuShow && (
         <SubMenu isDeleted={isLoading} onDeleteModalShow={onDeleteModalShow} />
       )}

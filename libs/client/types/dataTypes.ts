@@ -53,6 +53,7 @@ export type GetRecordRequest = {
   startDate?: string;
   endDate?: string;
   dates?: string[];
+  standard?: string;
 };
 
 export type EditRecordRequest = {
@@ -70,4 +71,13 @@ export type SelectedData = {
 
 export type DeleteRecordRequest = {
   ids: number[];
+};
+
+export type GetRecordByDayRequest = {
+  page: string;
+  day?: SortValue;
+  end?: SortValue;
+  start?: SortValue;
+  duration?: SortValue;
+  keyWord?: string;
 };

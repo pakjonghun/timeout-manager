@@ -1,23 +1,21 @@
 import { NextPage } from "next";
 import StandardLabel from "./StandardLabel";
-import { SelectDataType } from "@libs/client/types/dataTypes";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { joinStyleClass } from "@libs/client/utils";
+import { standardList } from "@libs/client/constants";
 
 interface props {
-  data: SelectDataType[];
   isSelectOpen: boolean;
   onSelect: (event: React.FormEvent<HTMLUListElement>) => void;
   onToggleOption: () => void;
   selectOption?: string;
-  selectOptions?: React.ReactNode[];
 }
 
 const Select: NextPage<props> = ({
-  data,
   selectOption,
   isSelectOpen,
-  selectOptions,
+
   onSelect,
   onToggleOption,
 }) => {
@@ -29,7 +27,7 @@ const Select: NextPage<props> = ({
         className="flex justify-between items-center min-w-[6.8rem] p-3 text-xs font-medium border-[1px] space-x-1 roundShadow-md"
       >
         <span className="text-gray-500 first-letter:uppercase">
-          {selectOption ? selectOption : selectOptions}
+          {selectOption}
         </span>
 
         <svg
@@ -50,7 +48,7 @@ const Select: NextPage<props> = ({
             onChange={onSelect}
             className="absolute top-[100%] origin-top flex flex-col border-[1px] divide-y-[1px] roundShadow-md whitespace-normal z-20"
           >
-            {data.map((v) => (
+            {standardList.map((v) => (
               <li
                 key={`${v.name}-${v.id}`}
                 className={joinStyleClass(

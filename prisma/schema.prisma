@@ -85,6 +85,7 @@ model Answers{
 
 model WorkTimes{
   id Int @id @default(autoincrement())
+  day String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId Int

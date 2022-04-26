@@ -11,6 +11,9 @@ interface props {
 
 const SubMenu: NextPage<props> = ({ isDeleted, onDeleteModalShow }) => {
   const userRole = useAppSelector((state) => state.user.role);
+  const standard = useAppSelector((state) => state.search.standard);
+
+  if (standard === "date") return null;
 
   if (userRole !== "ADMIN") return null;
 

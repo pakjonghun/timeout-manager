@@ -14,8 +14,17 @@ type UserTheadKey = "createdAt" | "start" | "end" | "duration";
 
 type AdminTheadKey = "#" | "name" | "start" | "end" | "duration";
 
+type AdminByDayTheadKey = "day" | "count" | "ended" | "average";
+
 type TheadState = {
   [key: string]: Thead;
+};
+
+const adminByDayThead: TheadState = {
+  day: { sort: null, colSpan: 3 },
+  count: { sort: null, colSpan: 2 },
+  average: { sort: null, colSpan: 2 },
+  ended: { sort: null, colSpan: 2 },
 };
 
 const timerThead: TheadState = {
@@ -44,6 +53,7 @@ type RecordState = {
     userThead: TheadState;
     adminThead: TheadState;
     timerThead: TheadState;
+    adminByDayThead: TheadState;
   };
   selectedIds: number[];
   currentPage: number;
@@ -51,15 +61,16 @@ type RecordState = {
   currentSort: [string | null, SortValue | null];
 };
 
-export type SortKey = UserTheadKey | AdminTheadKey;
+export type SortKey = UserTheadKey | AdminTheadKey | AdminByDayTheadKey;
 
 type SortPayload = {
   userRole: Role;
-  sortKey: UserTheadKey | AdminTheadKey;
+  sortKey: UserTheadKey | AdminTheadKey | AdminByDayTheadKey;
+  sortBy?: string;
 };
 
 const initialState: RecordState = {
-  theads: { userThead, adminThead, timerThead },
+  theads: { userThead, adminThead, timerThead, adminByDayThead },
   selectedIds: [],
   currentPage: 1,
   selectdData: null,
@@ -71,12 +82,15 @@ const recordSlice = createSlice({
   initialState,
   reducers: {
     sort: (state, { payload }: PayloadAction<SortPayload>) => {
-      const { userRole, sortKey } = payload;
+      const { userRole, sortKey, sortBy } = payload;
       switch (userRole) {
         case "ADMIN":
+          let thead = state.theads.adminThead;
+          if (sortBy) thead = state.theads.adminByDayThead;
+
           const [key] = state.currentSort;
           const adminValue = getSortValue(state.currentSort[1]);
-          const thead = state.theads.adminThead;
+
           if (key) thead[key].sort = null;
           thead[sortKey].sort = adminValue;
           state.currentSort = [sortKey, adminValue];

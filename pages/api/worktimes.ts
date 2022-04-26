@@ -5,6 +5,7 @@ import withMethod from "@libs/server/withMethod";
 import withCookie from "@libs/server/withCookie";
 import { getCanStartTime } from "@libs/server/utils";
 import { WorkTimeResponse } from "@libs/server/types/dataTypes";
+import { format } from "date-fns";
 
 const handler = async (
   req: NextApiRequest,
@@ -31,6 +32,7 @@ const handler = async (
             },
           },
           start: new Date(start),
+          day: format(new Date(), "yyyy-MM-dd"),
         },
       });
       return res.status(201).json({ success: true, workTime });

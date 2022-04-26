@@ -1,3 +1,4 @@
+import { RecordStandard } from "./../../libs/client/types/index";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type SearchState = {
@@ -6,6 +7,7 @@ type SearchState = {
   endDate: string | null;
   dates: string[];
   isShowFilter: boolean;
+  standard: RecordStandard;
 };
 
 const initialState: SearchState = {
@@ -14,6 +16,7 @@ const initialState: SearchState = {
   keyWord: null,
   startDate: null,
   endDate: null,
+  standard: "name",
 };
 
 const searchSlice = createSlice({
@@ -51,6 +54,9 @@ const searchSlice = createSlice({
     toggleFilter: (state) => {
       state.isShowFilter = !state.isShowFilter;
     },
+    setStandard: (state, { payload }: PayloadAction<RecordStandard>) => {
+      state.standard = payload;
+    },
     reset: () => {
       return initialState;
     },
@@ -58,6 +64,7 @@ const searchSlice = createSlice({
 });
 
 export const {
+  setStandard,
   toggleFilter,
   showFilter,
   hideFilter,

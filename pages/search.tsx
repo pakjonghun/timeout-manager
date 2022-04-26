@@ -1,23 +1,13 @@
 import Layout from "@components/Layout";
-import EditRecordModal from "@components/Modals/EditRecordModal";
-import NameRecordRow from "@components/Row/UserRecordRow";
-import DateRecordRow from "@components/Row/DateRecordRow";
-import HeaderRow from "@components/Row/HeaderRow";
+import RecordByDay from "@components/RecordByDay";
 import SearchInput from "@components/SearchInput";
-import SubSearch from "@components/SearchInput/SubSearch";
-
-import { useCallback, useMemo, useState } from "react";
-import { useAppSelector } from "@libs/client/useRedux";
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import Records from "@components/Records";
 import { joinStyleClass } from "@libs/client/utils";
 
 const Search = () => {
-  const [standard, setStandard] = useState("name");
-
-  const onStandard = useCallback((event: React.FormEvent<HTMLDivElement>) => {
-    setStandard((event.target as HTMLInputElement).value);
-  }, []);
-
+  const standard = useAppSelector((state) => state.search.standard);
   const userRole = useAppSelector((state) => state.user.role);
   const isFilterShow = useAppSelector((state) => state.search.isShowFilter);
 
@@ -26,7 +16,6 @@ const Search = () => {
       canGoBack={false}
       title={userRole === "ADMIN" ? "기록검색" : "내 기록 검색"}
     >
-      {/* <EditRecordModal isShow={showEditRecordModal} onClose={onCloseModal} /> */}
       <article className="relative flex flex-col justify-center items-center px-5 w-full">
         <div
           className={joinStyleClass(
@@ -35,32 +24,31 @@ const Search = () => {
               : ""
           )}
         />
-        <form className="space-y-4 w-[90%] sm:w-[60%]">
-          <SearchInput />
-        </form>
-        <SubSearch standard={standard} onStandard={onStandard} />
-        <ul className="relative max-h-[80vh] w-full pb-10 px-5  divide-y-[1px] mt-5 overflow-y-auto text-sm rounded-md">
+        <SearchInput />
+
+        <div className="relative max-h-[80vh] w-full pb-10 px-5 divide-y-[1px] mt-5 text-sm rounded-md">
           {standard === "name" ? (
             <>
               <Records
                 classes={joinStyleClass(
-                  "grid w-full",
+                  "grid w-full space-y-3",
                   userRole === "ADMIN"
-                    ? "grid-rows-[55vh,3vh]"
-                    : "grid-rows-[70vh,3vh]"
+                    ? "grid-rows-[minmax(3.5rem,5vh),minmax(10rem,55vh),minmax(3.5rem,5vh)]"
+                    : "grid-rows-[70vh,4vh]"
                 )}
-                isSubMenuShow={false}
-              >
-                {/* <div>dhildren</div> */}
-              </Records>
+              />
             </>
           ) : (
-            <>
-              {/* <HeaderRow options={options2} /> */}
-              {/* <DateRecordRow data={record2} /> */}
-            </>
+            <RecordByDay
+              classes={joinStyleClass(
+                "grid w-full space-y-3",
+                userRole === "ADMIN"
+                  ? "grid-rows-[minmax(3.5rem,5vh),minmax(10rem,55vh),minmax(3.5rem,5vh)]"
+                  : "grid-rows-[70vh,4vh]"
+              )}
+            />
           )}
-        </ul>
+        </div>
       </article>
     </Layout>
   );

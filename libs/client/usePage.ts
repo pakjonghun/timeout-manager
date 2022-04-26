@@ -3,24 +3,30 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "@libs/client/useRedux";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
 import { nextPage, previousPage } from "@store/reducer/record";
+import { useGetRecordsByDayQuery } from "@store/services/search";
 
-type UsePagnationType = {
+type returnType = {
   page: number;
   totalPage?: number;
   onNextPage: () => void;
   onPreviousPage: () => void;
 };
 
-const usePage = (): UsePagnationType => {
+const usePage = (pageBy?: string): returnType => {
   const dispatch = useDispatch();
   const page = useAppSelector((state) => state.record.currentPage);
 
   const { data: records, refetch } = useGetRecordWorkTimesQuery();
-  const totalPage = records?.totalPage;
+  const { data: recordsByDay, refetch: refetchByDay } =
+    useGetRecordsByDayQuery();
+
+  const totalPage =
+    pageBy === "day" ? recordsByDay?.totalPage : records?.totalPage;
 
   useEffect(() => {
-    refetch();
-  }, [page, refetch]);
+    if (pageBy === "day") refetchByDay();
+    else refetch();
+  }, [page, pageBy, refetch, refetchByDay]);
 
   const onNextPage = useCallback(() => {
     if (!totalPage) return;

@@ -1,10 +1,16 @@
 import Input from "@components/SearchInput/SearchInput";
 import Filter from "@components/SearchInput/Filter";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
-import { hideFilter, resetDates } from "@store/reducer/search";
-import { joinStyleClass } from "@libs/client/utils";
+import { hideFilter, resetDates, setKeyWord } from "@store/reducer/search";
+import { useForm } from "react-hook-form";
+import { useGetRecordWorkTimesQuery } from "@store/services/records";
+import { useGetRecordsByDayQuery } from "@store/services/search";
+
+interface form {
+  term: string;
+}
 
 const SearchInput = () => {
   const isShowFilter = useAppSelector((state) => state.search.isShowFilter);
@@ -18,10 +24,22 @@ const SearchInput = () => {
     [dispatch]
   );
 
+  const standard = useAppSelector((state) => state.search.standard);
+  const { register, watch } = useForm<form>({ mode: "all" });
+  const { refetch } = useGetRecordWorkTimesQuery();
+  const { refetch: refetchByDay } = useGetRecordsByDayQuery();
+  const term = watch("term");
+
+  useEffect(() => {
+    dispatch(setKeyWord(term));
+    if (standard === "date") refetchByDay();
+    else refetch();
+  }, [term, standard, dispatch, refetch, refetchByDay]);
+
   return (
-    <div className={joinStyleClass("relative z-20")}>
+    <div className="relative z-20 w-[90%] sm:w-[60%] mb-10">
       <div className="max-w-screen-md w-full space-y-2">
-        <Input />
+        <Input register={register("term")} />
         <AnimatePresence>
           {isShowFilter && (
             <motion.div
