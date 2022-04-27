@@ -1,35 +1,34 @@
 import { NextPage } from "next";
-import { PostListRowType } from "@libs/client/types/dataTypes";
 import { getFullDate, joinStyleClass } from "@libs/client/utils";
 import Link from "next/link";
+import { Posts, Users } from "@prisma/client";
 
 interface props {
-  data: PostListRowType;
+  data: Posts & { user: Pick<Users, "name"> };
   isPickable?: boolean;
   styles?: React.CSSProperties;
+  index: number;
 }
 
-const PostRow: NextPage<props> = ({ data, styles, isPickable }) => {
+const PostRow: NextPage<props> = ({ index, data, styles, isPickable }) => {
   return (
-    <Link href={`/posts/${data.id}`}>
+    <Link href={`/notices/${data.id}`}>
       <a>
         <li
           style={styles}
           className={joinStyleClass(
-            "sticky top-0 grid grid-cols-9 py-4 place-items-center font-medium opacity-60 z-10",
+            "grid grid-cols-8 py-4 place-items-center font-medium opacity-60 z-10",
             isPickable
               ? "transition scale hover:opacity-100 cursor-pointer"
-              : "",
-            data.isAnswered ? "text-green-500" : "text-gray-600"
+              : ""
           )}
         >
-          <span className="font-md">{data.no}</span>
+          <span className="font-md">{index + 1}</span>
           <span className="col-span-3 font-md">{data.title}</span>
           <span className="col-span-2 font-md">
-            {getFullDate(data.updatedAt)}
+            {getFullDate(new Date(data.updatedAt))}
           </span>
-          <span className="col-span-2 font-md">{data.user}</span>
-          <span className="font-md">{data.ment}</span>
+          <span className="col-span-2 font-md">{data.user.name}</span>
         </li>
       </a>
     </Link>

@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import Logo from "@components/Layout/Logo";
 import Spin from "@components/Spin";
 import Title from "@components/Title";
-import SideMenus from "@components/Layout/SideMenus";
-import MainNavMenus from "@components/Layout/MainNavMenus";
+import { sideMenus } from "@libs/client/constants";
+import { mainMenus } from "@libs/client/constants";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@libs/client/useRedux";
 import { useGetMeQuery } from "@store/services/user";
 import { setRole } from "@store/reducer/user";
+import Menus from "./Menus";
 
 interface props {
   children: React.ReactNode;
@@ -25,28 +26,7 @@ const Layout: NextPage<props> = ({
   isPrivate = true,
 }) => {
   const router = useRouter();
-  const { data: me } = useGetMeQuery();
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (me && !me.success) {
-      toast.error("잘못된 유저 정보 입니다.");
-      router.push("/login");
-    }
-
-    if (me && me.user) {
-      dispatch(setRole(me.user.role));
-    }
-  }, [me, router, dispatch]);
-
-  if (me === undefined || !me?.success) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin classes="w-28 h-28 fill-gray-200" />
-      </div>
-    );
-  }
   return (
     <div className="max-w-screen-lg h-screen min-h-max mx-auto">
       <Title title={title} />
@@ -57,11 +37,11 @@ const Layout: NextPage<props> = ({
               <li className="mr-5">
                 <Logo />
               </li>
-              <MainNavMenus />
+              <Menus menus={mainMenus} />
             </ul>
 
             <ul className="flex items-center space-x-5">
-              <SideMenus />
+              <Menus menus={sideMenus} />
             </ul>
           </nav>
         </header>

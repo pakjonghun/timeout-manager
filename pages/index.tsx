@@ -13,6 +13,7 @@ import {
   useEndWorkMutation,
   useGetTimerWorkTimesQuery,
 } from "@store/services/timerWorkTime";
+import PrivateLoader from "@components/PrivateLoader";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");
@@ -61,6 +62,7 @@ const Home = () => {
 
   return (
     <Layout title="초과근무 관리" canGoBack={false}>
+      <PrivateLoader />
       <div className="crossAlign">
         <TimeoutConfirmModal
           title={"초과근무를 종료 하겠습니까?"}

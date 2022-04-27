@@ -1,4 +1,5 @@
 import Layout from "@components/Layout";
+import PrivateLoader from "@components/PrivateLoader";
 import Records from "@components/Records";
 import { useAppSelector } from "@libs/client/useRedux";
 import { joinStyleClass } from "@libs/client/utils";
@@ -11,6 +12,7 @@ const Record = () => {
       title={userRole === "ADMIN" ? "오늘 초과근무 현황" : "초과근무 내역"}
       canGoBack={false}
     >
+      <PrivateLoader />
       <Records
         classes={joinStyleClass(
           "grid w-full mt-10",

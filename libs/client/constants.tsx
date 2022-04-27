@@ -1,6 +1,24 @@
 import gravatar from "gravatar";
 
-export const menus = [
+export const postThead = {
+  no: { colSpan: 1 },
+  title: { colSpan: 3 },
+  updatedAt: { colSpan: 2 },
+  user: { colSpan: 2 },
+};
+
+export const standardList = [
+  { name: "standard", id: "name" },
+  { name: "standard", id: "date" },
+];
+
+export const mainMenus = [
+  { name: "HOME", link: "/" },
+  { name: "NOTICE", link: "/notices" },
+  { name: "RECORD", link: "/records" },
+];
+
+export const sideMenus = [
   {
     name: (
       <svg
@@ -36,9 +54,4 @@ export const menus = [
     ),
     link: "/api/users/logout",
   },
-];
-
-export const standardList = [
-  { name: "standard", id: "name" },
-  { name: "standard", id: "date" },
 ];

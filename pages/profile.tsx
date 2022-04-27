@@ -7,6 +7,7 @@ import EditProfileModal from "@components/Modals/EditProfileModal";
 import HeaderRow from "@components/Row/HeaderRow";
 import useSWR from "swr";
 import { TimeType } from "@libs/server/types";
+import PrivateLoader from "@components/PrivateLoader";
 
 const options: RecordRowHeaderType = {
   start: { colSpan: 1 },
@@ -34,6 +35,7 @@ const Profile = () => {
 
   return (
     <Layout title="개인정보" canGoBack={false}>
+      <PrivateLoader />
       <EditProfileModal onClose={onCloseModal} isShow={showEditProfileModal} />
 
       <div className="mt-24 sm:mt-32 lg:mt-40;">

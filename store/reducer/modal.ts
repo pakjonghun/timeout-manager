@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type Modal = "confirmTimer" | "recordEdit" | "recordDelete";
+export type Modal =
+  | "confirmTimer"
+  | "recordEdit"
+  | "recordDelete"
+  | "postAdd"
+  | "postEdit"
+  | "postDelete";
 
 type ModalState = {
   [key: string]: boolean;
@@ -10,6 +16,9 @@ const initialState: ModalState = {
   confirmTimer: false,
   recordEdit: false,
   recordDelete: false,
+  postAdd: false,
+  postEdit: false,
+  postDelete: false,
 };
 
 const modalSlice = createSlice({

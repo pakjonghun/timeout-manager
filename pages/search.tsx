@@ -4,6 +4,7 @@ import SearchInput from "@components/SearchInput";
 import { useAppSelector } from "@libs/client/useRedux";
 import Records from "@components/Records";
 import { joinStyleClass } from "@libs/client/utils";
+import PrivateLoader from "@components/PrivateLoader";
 
 const Search = () => {
   const standard = useAppSelector((state) => state.search.standard);
@@ -15,6 +16,7 @@ const Search = () => {
       canGoBack={false}
       title={userRole === "ADMIN" ? "기록검색" : "내 기록 검색"}
     >
+      <PrivateLoader />
       <article className="relative flex flex-col justify-center items-center px-5 w-full">
         <div
           className={joinStyleClass(

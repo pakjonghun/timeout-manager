@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { withIronSessionApiRoute } from "iron-session/next";
+import { withIronSessionApiRoute, withIronSessionSsr } from "iron-session/next";
 
 declare module "iron-session" {
   interface IronSessionData {
@@ -10,15 +10,21 @@ declare module "iron-session" {
   }
 }
 
+const option = {
+  cookieName: "authorization",
+  password: process.env.COOKIE_PASSWORD!,
+  cookieOptions: {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
+  },
+};
+
 const withCookie = (func: any) => {
-  return withIronSessionApiRoute(func, {
-    cookieName: "authorization",
-    password: process.env.COOKIE_PASSWORD!,
-    cookieOptions: {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
-    },
-  });
+  return withIronSessionApiRoute(func, option);
+};
+
+export const withSSRCookie = (func: any) => {
+  return withIronSessionSsr(func, option);
 };
 
 export default withCookie;

@@ -5,7 +5,10 @@ import { AnimatePresence } from "framer-motion";
 import ModalTitle from "@components/ModalTitle";
 import ModalButtons from "./ModalButtons";
 import { useForm } from "react-hook-form";
-import { useAddNoticeMutation } from "@store/services/notice";
+import {
+  useAddNoticeMutation,
+  useEditNoticeMutation,
+} from "@store/services/notice";
 import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import ErrorMessage from "@components/ErrorMessage";
@@ -14,6 +17,9 @@ interface props {
   isShow: boolean;
   onClose: (event: React.MouseEvent<HTMLElement>) => void;
   onConfirm: () => void;
+  preTitle: string;
+  preDesc: string;
+  id: number;
 }
 
 interface form {
@@ -21,24 +27,43 @@ interface form {
   description: string;
 }
 
-const AddPostModal: NextPage<props> = ({ isShow, onClose, onConfirm }) => {
+const EditPost: NextPage<props> = ({
+  id,
+  preTitle,
+  preDesc,
+  isShow,
+  onClose,
+  onConfirm,
+}) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<form>({ mode: "all" });
-  const [addNoticeMutate, { isError }] = useAddNoticeMutation();
+  } = useForm<form>({
+    mode: "all",
+  });
 
   useEffect(() => {
-    if (isError) toast.error("공지글 추가가 실패했습니다.");
+    setValue("title", preTitle);
+    setValue("description", preDesc);
+  }, [setValue, preTitle, preDesc]);
+
+  const [editNoticeMutate, { isError }] = useEditNoticeMutation();
+
+  useEffect(() => {
+    if (isError) toast.error("공지글 편집이 실패했습니다.");
   }, [isError]);
 
   const onValid = useCallback(
     (value: form) => {
-      console.log(value);
-      addNoticeMutate(value);
+      const payload = {
+        ...value,
+        id,
+      };
+      editNoticeMutate(payload);
     },
-    [addNoticeMutate]
+    [editNoticeMutate, id]
   );
 
   return (
@@ -46,7 +71,7 @@ const AddPostModal: NextPage<props> = ({ isShow, onClose, onConfirm }) => {
       {isShow && (
         <Modal onClose={onClose}>
           <ModalTitle
-            title="공지글 작성"
+            title="공지글 편집"
             role="success"
             indicator={
               <svg
@@ -89,4 +114,4 @@ const AddPostModal: NextPage<props> = ({ isShow, onClose, onConfirm }) => {
   );
 };
 
-export default AddPostModal;
+export default EditPost;

@@ -59,6 +59,7 @@ const Input: NextPage<props> = ({
       {role === "desc" && (
         <textarea
           {...attributes}
+          {...register}
           style={styles}
           placeholder={placeholder}
           id={id}
