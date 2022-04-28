@@ -1,9 +1,9 @@
+import { NextPage } from "next";
 import Modal from "@components/Modal";
 import ModalTitle from "@components/ModalTitle";
 import ModalButtons from "@components/Modals/ModalButtons";
-import { AnimatePresence } from "framer-motion";
 import useModal from "@libs/client/useModal";
-import { NextPage } from "next";
+import { AnimatePresence } from "framer-motion";
 
 interface props {
   title: string;

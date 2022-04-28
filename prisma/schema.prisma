@@ -22,9 +22,6 @@ model Users{
   status Status @default(NOTWORKING)
   auths Auths[]
   posts Posts[]
-  comments Comments[]
-  recomments ReComments[]
-  answers Answers[]
   worktimes WorkTimes[]
 }
 
@@ -45,42 +42,7 @@ model Posts{
   description String @db.MediumText
   userId Int
   user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
-  comments Comments[]
-  answer Answers?
-}
-
-model Comments{
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  description String @db.MediumText
-  userId Int
-  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
-  postId Int
-  post Posts @relation(fields: [postId], references: [id],onDelete: Cascade)
-  recomments ReComments[]
-}
-
-model ReComments{
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  description String @db.MediumText
-  userId Int
-  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
-  commentId Int
-  comment Comments @relation(fields: [commentId], references: [id],onDelete: Cascade)
-}
-
-model Answers{
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  description String @db.MediumText
-  userId Int
-  user Users @relation(fields: [userId], references: [id],onDelete: Cascade)
-  postId Int
-  post Posts @relation(fields: [postId], references: [id],onDelete: Cascade)
+  
 }
 
 model WorkTimes{

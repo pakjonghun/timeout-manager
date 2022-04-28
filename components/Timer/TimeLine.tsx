@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { NextPage } from "next";
-import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
-import { motion, AnimatePresence } from "framer-motion";
 import TimeIndicator from "./TimeIndicator";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { setIsStatusChanging } from "@store/reducer/workTime";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface props {
   hour: number;

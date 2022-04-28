@@ -4,16 +4,16 @@ import Modal from "@components/Modal";
 import { AnimatePresence } from "framer-motion";
 import ModalTitle from "@components/ModalTitle";
 import { useForm } from "react-hook-form";
-import { useGetMeQuery } from "@store/services/user";
+import { useGetMeQuery, useUpdateProfileMutation } from "@store/services/user";
 import { useCallback, useEffect, useState } from "react";
 import ModalButtons from "./ModalButtons";
 import AvatarInput from "@components/AvatarInput";
 import { useAppDispatch } from "@libs/client/useRedux";
-import { setAvatar } from "@store/reducer/user";
+import { toast } from "react-toastify";
 
 interface props {
   isShow: boolean;
-  onClose: (event: React.MouseEvent<HTMLElement>) => void;
+  onClose: (event?: React.MouseEvent<HTMLElement>) => void;
 }
 
 interface form {
@@ -25,35 +25,103 @@ interface form {
 
 const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
   const dispatch = useAppDispatch();
-  const { data: me, isSuccess } = useGetMeQuery();
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: me, isSuccess } = useGetMeQuery("");
   const [avatarPrevies, setAvatarPreview] = useState("");
   const { register, handleSubmit, watch, setValue } = useForm<form>({
     mode: "all",
   });
+  const [updateProfileMutate, { isError, isSuccess: isEditProfilSuccess }] =
+    useUpdateProfileMutation();
 
   const previewImage = watch("avatar");
-  useEffect(() => {
-    if (isSuccess && me.user?.avatar) {
-      dispatch(setAvatar(me.user.avatar));
-    }
 
+  useEffect(() => {
     const user = me?.user;
     if (isSuccess) {
       setValue("name", user?.name);
       setValue("email", user?.email);
       setValue("phone", user?.phone);
     }
-  }, [me, isSuccess, dispatch]);
+  }, [me, isSuccess, dispatch, setValue]);
 
   useEffect(() => {
     if (previewImage?.length) {
       setAvatarPreview(URL.createObjectURL(previewImage[0]));
     }
-  }, [previewImage]);
+  }, [previewImage, isEditProfilSuccess]);
 
-  const onValid = useCallback((values: form) => {
-    console.log(values);
-  }, []);
+  useEffect(() => {
+    if (isError) {
+      toast.error("프로필 업데이트가 실패했습니다.");
+      setIsLoading(false);
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isEditProfilSuccess) {
+      setIsLoading(false);
+    }
+  }, [isEditProfilSuccess]);
+
+  const onValid = useCallback(
+    async (values: form) => {
+      onClose();
+      if (values.avatar && values.avatar.length) {
+        try {
+          setIsLoading(true);
+          const res = await fetch("/api/files");
+          const result = await res.json();
+          if (result.success) {
+            const {
+              url: { id: imageId, uploadURL },
+            } = result;
+            const form = new FormData();
+            form.append(
+              "file",
+              values.avatar[0],
+              `${me?.user?.id}_${me?.user?.name}_avatar`
+            );
+
+            const upload = await fetch(uploadURL, {
+              method: "POST",
+              body: form,
+            });
+
+            const uploadResult = await upload.json();
+
+            if (!uploadResult.success) {
+              setIsLoading(false);
+              return toast.error("파일 업로드가 실패했습니다.");
+            }
+            const body = {
+              id: me!.user!.id,
+              ...(values.name && { name: values.name }),
+              ...(values.phone && { phone: values.phone }),
+              ...(values.email && { email: values.email }),
+              ...(values.avatar && { avatar: imageId }),
+            };
+            updateProfileMutate(body);
+          } else {
+            setIsLoading(false);
+            toast.error("파일 업로드가 실했습니다.");
+          }
+        } catch (err) {
+          setIsLoading(false);
+        }
+      }
+
+      const body = {
+        id: me!.user!.id,
+        ...(values.name && { name: values.name }),
+        ...(values.phone && { phone: values.phone }),
+        ...(values.email && { email: values.email }),
+      };
+      updateProfileMutate(body);
+    },
+
+    [me, onClose, updateProfileMutate]
+  );
 
   const onEditConfirm = useCallback(() => {}, []);
 
@@ -104,7 +172,11 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
               id="email"
               size="lg"
             />
-            <ModalButtons onClose={onClose} onConfirm={onEditConfirm} />
+            <ModalButtons
+              isLoading={isLoading}
+              onClose={onClose}
+              onConfirm={onEditConfirm}
+            />
           </form>
         </Modal>
       )}

@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import HeaderRow from "@components/Row/HeaderRow";
-import UserRecordRow from "@components/Row/UserRecordRow";
 import RecordByDay from "@components/Row/RecordByDay";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import useSort from "@libs/client/useSort";
-import Spin from "@components/Spin";
-import { useGetRecordsByDayQuery } from "@store/services/search";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
+import Spin from "@components/Spin";
 import { setDates, setStandard } from "@store/reducer/search";
+import { useGetRecordsByDayQuery } from "@store/services/search";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
+import { toast } from "react-toastify";
 
 const RecordTable = ({}) => {
   const onSortClick = useSort("day");
@@ -18,7 +17,7 @@ const RecordTable = ({}) => {
   const dispatch = useAppDispatch();
   const theads = useAppSelector((state) => state.record.theads);
   const userRole = useAppSelector((state) => state.user.role);
-  const { data: records, isLoading, isError } = useGetRecordsByDayQuery();
+  const { data: records, isLoading } = useGetRecordsByDayQuery();
   const { refetch } = useGetRecordWorkTimesQuery();
 
   const onRowClick = useCallback(
@@ -31,13 +30,9 @@ const RecordTable = ({}) => {
   );
 
   if (userRole !== "ADMIN") {
-    toast.warn("당신은 관리자가 아닙니다.");
+    toast.warn("권한이 없습니다.");
     router.push("/");
   }
-
-  if (!records?.records) return null;
-
-  if (isError) return null;
 
   if (isLoading) {
     return (

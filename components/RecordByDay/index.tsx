@@ -1,12 +1,12 @@
-import { NextPage } from "next";
 import { useEffect } from "react";
-import { reset as resetSearch } from "@store/reducer/search";
+import { NextPage } from "next";
 import RecordTable from "@components/RecordByDay/RecordTable";
 import PageNationButtons from "@components/PageNationButtons";
 import usePage from "@libs/client/usePage";
 import { joinStyleClass } from "@libs/client/utils";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { reset } from "@store/reducer/record";
+import { reset as resetSearch } from "@store/reducer/search";
 
 interface props {
   classes?: string;

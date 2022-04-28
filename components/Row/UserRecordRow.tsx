@@ -18,8 +18,6 @@ const NameRecordRow: NextPage<props> = ({
 }) => {
   const { start, end, duration } = data;
 
-  if (!end || !duration) return null;
-
   return (
     <li
       {...(onClick && { onClick })}
@@ -30,15 +28,17 @@ const NameRecordRow: NextPage<props> = ({
       )}
     >
       <span className="col-span-3 font-md">
-        {format(new Date(start), "yyyy-MM-dd")}
+        {start && format(new Date(start), "yyyy-MM-dd")}
       </span>
       <span className="col-span-2 font-md">
-        {format(new Date(start), "HH:mm")}
+        {start && format(new Date(start), "HH:mm")}
       </span>
       <span className="col-span-2 font-md">
-        {format(new Date(end), "HH:mm")}
+        {end ? format(new Date(end), "HH:mm") : "-"}
       </span>
-      <span className="col-span-2 font-md">{getDuration(duration)}</span>
+      <span className="col-span-2 font-md">
+        {duration ? getDuration(duration) : "-"}
+      </span>
     </li>
   );
 };

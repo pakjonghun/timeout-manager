@@ -79,7 +79,7 @@ const EditRecordModal: NextPage<props> = () => {
       "endTime",
       selectedData?.end ? format(new Date(selectedData.end), "HH:mm") : ""
     );
-  }, [selectedData]);
+  }, [selectedData, setValue]);
 
   return (
     <AnimatePresence>

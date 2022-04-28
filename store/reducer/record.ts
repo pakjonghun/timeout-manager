@@ -143,7 +143,6 @@ export const {
   sort,
   reset,
   addItem,
-
   nextPage,
   previousPage,
   removeItem,

@@ -88,3 +88,6 @@ export const getAvatar = (size: number) => {
     d: "retro",
   })}`;
 };
+
+export const avatarUrlMaker = (id: string) =>
+  `https://imagedelivery.net/0ZP-N9B45ji28JoChYUvWw/${id}/avatar`;

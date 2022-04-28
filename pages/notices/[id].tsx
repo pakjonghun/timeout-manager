@@ -1,19 +1,11 @@
+import { useRouter } from "next/router";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Layout from "@components/Layout";
-import { Posts, Role } from "@prisma/client";
 import ProfileIcon from "@components/ProfileIcon";
 import PostArticle from "@components/PostArticle";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import client from "@libs/server/client";
-import { useRouter } from "next/router";
+import { Posts, Role } from "@prisma/client";
 import { format } from "date-fns";
-import useModal from "@libs/client/useModal";
-import { useCallback, useEffect } from "react";
-import { useGetMeQuery } from "@store/services/user";
-import EditPost from "@components/Modals/EditPostModal";
-import DeletePost from "@components/Modals/DeletePostModal";
-import { useDeleteNoticeMutation } from "@store/services/notice";
-import { toast } from "react-toastify";
-import { useAppSelector } from "@libs/client/useRedux";
 
 interface WithUserPost extends Posts {
   user: {

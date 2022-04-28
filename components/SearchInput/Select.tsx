@@ -1,9 +1,8 @@
 import { NextPage } from "next";
 import StandardLabel from "./StandardLabel";
-
-import { motion, AnimatePresence } from "framer-motion";
-import { joinStyleClass } from "@libs/client/utils";
 import { standardList } from "@libs/client/constants";
+import { joinStyleClass } from "@libs/client/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface props {
   isSelectOpen: boolean;

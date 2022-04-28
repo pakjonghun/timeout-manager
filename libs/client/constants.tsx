@@ -1,10 +1,8 @@
-import gravatar from "gravatar";
-
 export const postThead = {
   no: { colSpan: 1 },
   title: { colSpan: 3 },
   updatedAt: { colSpan: 2 },
-  user: { colSpan: 2 },
+  writer: { colSpan: 2 },
 };
 
 export const standardList = [
@@ -16,7 +14,7 @@ export const mainMenus = [
   { name: "HOME", link: "/" },
   { name: "NOTICE", link: "/notices" },
   { name: "RECORD", link: "/records" },
-  { name: "ADMIN", link: "/admin" },
+  { name: "ADMIN", link: "/admins" },
 ];
 
 export const sideMenus = (avatar: string) => [
@@ -34,7 +32,7 @@ export const sideMenus = (avatar: string) => [
     link: "/search",
   },
   {
-    name: <img className="rounded-full" src={avatar} alt="profile" />,
+    name: <img className="w-8 h-8 rounded-full" src={avatar} alt="profile" />,
     link: "/profile",
   },
   {
@@ -47,6 +45,6 @@ export const sideMenus = (avatar: string) => [
         <path d="M160 416H96c-17.67 0-32-14.33-32-32V128c0-17.67 14.33-32 32-32h64c17.67 0 32-14.33 32-32S177.7 32 160 32H96C42.98 32 0 74.98 0 128v256c0 53.02 42.98 96 96 96h64c17.67 0 32-14.33 32-32S177.7 416 160 416zM502.6 233.4l-128-128c-12.51-12.51-32.76-12.49-45.25 0c-12.5 12.5-12.5 32.75 0 45.25L402.8 224H192C174.3 224 160 238.3 160 256s14.31 32 32 32h210.8l-73.38 73.38c-12.5 12.5-12.5 32.75 0 45.25s32.75 12.5 45.25 0l128-128C515.1 266.1 515.1 245.9 502.6 233.4z" />
       </svg>
     ),
-    link: "/api/users/logout",
+    link: "/logout",
   },
 ];

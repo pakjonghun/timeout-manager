@@ -23,9 +23,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
+  if (req.method === "GET") {
+    const post = await client.posts.findUnique({
+      where: { id: +id.toString() },
+      include: {
+        user: {
+          select: {
+            name: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    return res.json({ success: true, post });
+  }
+
   return res.json({ success: true });
 };
 
 export default withCookie(
-  withMethod({ methods: ["DELETE", "PATCH"], handler })
+  withMethod({ methods: ["DELETE", "PATCH", "GET"], handler })
 );

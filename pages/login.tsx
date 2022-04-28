@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Input from "@components/Input";
 import Title from "@components/Title";
 import Switch from "@components/Switch";
 import PublicTitle from "@components/PublicTitle";
-import ErrorMessage from "@components/ErrorMessage";
 import LoadingButton from "@components/LoadingButton";
 import { Login } from "@libs/client/types";
 import { useForm } from "react-hook-form";
 import { useLoginMutation } from "@store/services/user";
 import { toast } from "react-toastify";
+const Phone = dynamic(() => import("@components/Login/PhoneInput"));
+const Email = dynamic(() => import("@components/Login/EmailInput"));
 
 export interface phoneForm {
   phone: string;
@@ -146,63 +147,11 @@ const Login = () => {
           className="flex flex-col space-y-3"
         >
           {loginType === "phone" && (
-            <>
-              <Input
-                register={phoneRegister("phone", {
-                  required: "휴대폰 번호를 입력하세요",
-                  pattern: {
-                    value: /010\-[\d]{4}\-[\d]{4}/,
-                    message: "휴대폰 번호는 010-0000-0000입니다.",
-                  },
-                  validate: {
-                    isExist: (v) =>
-                      fetch("/api/users/existence", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ phone: v }),
-                      })
-                        .then((res) => res.status < 400 || "없는 번호 입니다.")
-                        .catch(() => "서버에서 오류가 발생했습니다."),
-                  },
-                })}
-                label="phone"
-                placeholder="010-0000-0000"
-                id="loginPhone"
-              />
-              <ErrorMessage message={phoneErrors.phone?.message} />
-            </>
+            <Phone phoneErrors={phoneErrors} phoneRegister={phoneRegister} />
           )}
 
           {loginType === "email" && (
-            <>
-              <Input
-                register={register("email", {
-                  required: "이메일을 입력하세요",
-                  pattern: {
-                    value: /[\w\d].+\@[\w].+\.[\w]{1,4}/,
-                    message: "이메일 형식이 올바르지 않습니다.",
-                  },
-                  validate: {
-                    isSpace: (v) =>
-                      !/[\s]/.test(v) || "공백은 포함 할 수 없습니다.",
-                    isExist: (v) =>
-                      fetch("/api/users/existence", {
-                        method: "post",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email: v }),
-                      })
-                        .then(
-                          (res) => res.status < 400 || "없는 이메일 입니다."
-                        )
-                        .catch(() => "서버에서 오류가 발생했습니다."),
-                  },
-                })}
-                label="email"
-                placeholder="id@email.com"
-                id="loginEmail"
-              />
-              <ErrorMessage message={errors.email?.message} />
-            </>
+            <Email errors={errors} register={register} />
           )}
 
           <LoadingButton isLoading={isLoading} buttonName="Login" />

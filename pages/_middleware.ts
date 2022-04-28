@@ -11,18 +11,22 @@ function checkIsPublic(pathname: string) {
 }
 
 export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const isApi = pathname.includes("api");
+  const isPublic = checkIsPublic(pathname);
+
   function redirect(path: string) {
     const url = req.nextUrl.clone();
     url.pathname = path;
     return NextResponse.redirect(url);
   }
-  const { pathname } = req.nextUrl;
-  const isApi = pathname.includes("api");
+
   if (isApi) return NextResponse.next();
-  const isPublic = checkIsPublic(pathname);
+
   if (!isPublic && !req.cookies.authorization) {
     return redirect("login");
   }
+
   if (isPublic && req.cookies.authorization) {
     return redirect("/");
   }

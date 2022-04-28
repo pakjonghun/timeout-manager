@@ -1,10 +1,10 @@
 import Layout from "@components/Layout";
+import Records from "@components/Records";
 import RecordByDay from "@components/RecordByDay";
 import SearchInput from "@components/SearchInput";
-import { useAppSelector } from "@libs/client/useRedux";
-import Records from "@components/Records";
-import { joinStyleClass } from "@libs/client/utils";
 import PrivateLoader from "@components/PrivateLoader";
+import { useAppSelector } from "@libs/client/useRedux";
+import { joinStyleClass } from "@libs/client/utils";
 
 const Search = () => {
   const standard = useAppSelector((state) => state.search.standard);

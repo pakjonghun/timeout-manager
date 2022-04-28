@@ -1,26 +1,30 @@
 import { useEffect } from "react";
+import Spin from "./Spin";
 import { useAppDispatch } from "@libs/client/useRedux";
-import { setRole } from "@store/reducer/user";
+import { avatarUrlMaker } from "@libs/client/utils";
+import { setAvatar, setRole } from "@store/reducer/user";
 import { useGetMeQuery } from "@store/services/user";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import Spin from "./Spin";
 
 const PrivateLoader = () => {
   const router = useRouter();
-  const { data: me } = useGetMeQuery();
+  const { data: me } = useGetMeQuery("1");
+  const { data: meWithRole } = useGetMeQuery("");
   const dispatch = useAppDispatch();
-
   useEffect(() => {
     if (me && !me.success) {
       toast.error("잘못된 유저 정보 입니다.");
       router.push("/login");
     }
 
-    if (me && me.user) {
-      dispatch(setRole(me.user.role));
+    if (me && me.user && meWithRole && meWithRole.user) {
+      dispatch(setRole(meWithRole.user.role));
+      if (me.user.avatar) {
+        dispatch(setAvatar(avatarUrlMaker(me.user.avatar)));
+      }
     }
-  }, [me, router, dispatch]);
+  }, [me, router, meWithRole, dispatch]);
 
   if (me === undefined || !me?.success) {
     return (

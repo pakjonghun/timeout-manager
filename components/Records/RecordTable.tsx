@@ -1,9 +1,13 @@
 import { useCallback } from "react";
+import Spin from "@components/Spin";
 import HeaderRow from "@components/Row/HeaderRow";
 import UserRecordRow from "@components/Row/UserRecordRow";
 import AdminNameRecordRow from "@components/Row/AdminNameRecordRow";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
+import useSort from "@libs/client/useSort";
+import useModal from "@libs/client/useModal";
+import { WithUserRecord } from "@libs/server/types/dataTypes";
 import {
   addItem,
   clearAll,
@@ -11,12 +15,8 @@ import {
   selectAll,
   setSelectedData,
 } from "@store/reducer/record";
-import useSort from "@libs/client/useSort";
-import useModal from "@libs/client/useModal";
-import { WithUserRecord } from "@libs/server/types/dataTypes";
-import Spin from "@components/Spin";
 
-const RecordTable = ({}) => {
+const RecordTable = () => {
   const dispatch = useAppDispatch();
   const onSortClick = useSort();
 
@@ -24,7 +24,6 @@ const RecordTable = ({}) => {
   const selectedIds = useAppSelector((state) => state.record.selectedIds);
   const userRole = useAppSelector((state) => state.user.role);
   const { data: records, isLoading, isError } = useGetRecordWorkTimesQuery();
-
   const onSelectAll = useCallback(() => {
     if (!records || !records?.records) return;
     const allLen = records.records.length;
@@ -67,10 +66,6 @@ const RecordTable = ({}) => {
     },
     [records, onShowModal, dispatch]
   );
-
-  if (!records?.records) return null;
-
-  if (isError) return null;
 
   if (isLoading) {
     return (

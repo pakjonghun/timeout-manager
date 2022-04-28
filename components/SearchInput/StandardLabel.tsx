@@ -1,5 +1,5 @@
-import { joinStyleClass } from "@libs/client/utils";
 import { NextPage } from "next";
+import { joinStyleClass } from "@libs/client/utils";
 
 interface props {
   name: string;

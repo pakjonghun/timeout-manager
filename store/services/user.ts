@@ -12,8 +12,12 @@ import {
 } from "./../../libs/client/types/dataTypes";
 import { api } from "./index";
 import { Users } from "@prisma/client";
+
 export const user = api.injectEndpoints({
   endpoints: (build) => ({
+    logout: build.query<CommonResponse, void>({
+      query: () => "users/logout",
+    }),
     login: build.mutation<CommonResponse, LoginRequest>({
       query: (body) => ({
         url: "users/login",
@@ -44,9 +48,17 @@ export const user = api.injectEndpoints({
         method: "PATCH",
         url: "users",
       }),
+      invalidatesTags: ["MyProfile"],
     }),
-    getMe: build.query<MyDetailInfoResponse, void>({
-      query: () => "users/me",
+    getMe: build.query<MyDetailInfoResponse, any>({
+      query: (layout) => {
+        if (layout) {
+          return `users/me?layout=${layout}`;
+        } else {
+          return "users/me";
+        }
+      },
+      providesTags: ["MyProfile"],
     }),
     getStatus: build.query<MyStatusResponse, void>({
       queryFn: async (_, api, __, fetch) => {
@@ -89,6 +101,7 @@ export const user = api.injectEndpoints({
 });
 
 export const {
+  useLogoutQuery,
   useLoginMutation,
   useAuthMutation,
   useJoinMutation,

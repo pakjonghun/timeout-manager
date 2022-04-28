@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { NextPage } from "next";
-import CalendarTHead from "./THead";
+import CalendarTHead from "./Thead";
 import CalendarHeader from "./Header";
 import CalendarBody from "./CalendarBody";
 import { getMonthDateList } from "@libs/client/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch } from "@libs/client/useRedux";
-import { resetDates } from "@store/reducer/search";
 import { CalendarSelect } from "@libs/client/types";
+import { resetDates } from "@store/reducer/search";
 
 interface props {
   isCaneldarShow: boolean;

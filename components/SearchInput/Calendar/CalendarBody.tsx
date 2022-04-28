@@ -1,15 +1,14 @@
 import { NextPage } from "next";
-import { format, set } from "date-fns";
 import { joinStyleClass } from "@libs/client/utils";
-import React from "react";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { CalendarSelect } from "@libs/client/types";
 import {
   removeDates,
   setEndDate,
   setStartDate,
   setDates,
 } from "@store/reducer/search";
-import { CalendarSelect } from "@libs/client/types";
+import { format, set } from "date-fns";
 
 interface props {
   selectType: CalendarSelect;

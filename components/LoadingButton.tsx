@@ -25,11 +25,11 @@ const LoadingButton: NextPage<props> = ({
       <button
         {...attributes}
         className={joinStyleClass(
-          " py-2 px-4  font-medium  rounded-md opacity-50 pointer-events-none shadow-sm",
+          " py-2 px-4  font-medium text-sm rounded-md opacity-50 pointer-events-none shadow-sm",
           loadingClasses || "bg-green-500 text-green-50"
         )}
       >
-        Login
+        Confirming
       </button>
     );
   }
@@ -44,9 +44,9 @@ const LoadingButton: NextPage<props> = ({
       )}
     >
       {isLoading ? (
-        <div className="grid grid-cols-3">
+        <div className="flex justify-center space-x-1 text-sm">
           <Spin styles={{ alignSelf: "center", justifySelf: "end" }} />
-          <span>Login</span>
+          <span className="text-sm">Confirming</span>
         </div>
       ) : (
         buttonName

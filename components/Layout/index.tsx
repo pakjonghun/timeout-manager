@@ -44,7 +44,7 @@ const Layout: NextPage<props> = ({
         </header>
       )}
       {canGoBack && (
-        <div className="grid grid-cols-3 w-full my-3">
+        <div className="grid grid-cols-3 w-fit my-3">
           <button className="text-left pl-5" onClick={() => router.back()}>
             &larr;
           </button>

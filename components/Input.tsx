@@ -14,6 +14,7 @@ interface props {
   role?: "desc" | "title";
   size?: SizeType;
   isRequire?: boolean;
+  classes?: string;
 }
 
 const Input: NextPage<props> = ({
@@ -27,6 +28,7 @@ const Input: NextPage<props> = ({
   role = "title",
   isRequire = true,
   register,
+  classes,
 }) => {
   const widths = {
     ["sm" as string]: "w-[286.47px]",
@@ -52,7 +54,12 @@ const Input: NextPage<props> = ({
           style={styles}
           placeholder={placeholder}
           id={id}
-          className={joinStyleClass("normalInput", widths[size])}
+          disabled={id === "loginEmail"}
+          className={joinStyleClass(
+            "normalInput",
+            widths[size],
+            classes ? classes : ""
+          )}
         />
       )}
 

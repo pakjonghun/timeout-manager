@@ -1,6 +1,6 @@
 import Layout from "@components/Layout";
-import PrivateLoader from "@components/PrivateLoader";
 import Records from "@components/Records";
+import PrivateLoader from "@components/PrivateLoader";
 import { useAppSelector } from "@libs/client/useRedux";
 import { joinStyleClass } from "@libs/client/utils";
 

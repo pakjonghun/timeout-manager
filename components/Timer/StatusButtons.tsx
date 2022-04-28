@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect } from "react";
 import StatusButton from "./StatusButton";
-import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import useModal from "@libs/client/useModal";
 import { joinStyleClass } from "@libs/client/utils";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { useStartWorkMutation } from "@store/services/timerWorkTime";
 import { toast } from "react-toastify";
-import useModal from "@libs/client/useModal";
 
 const StatusButtons = () => {
   const dispatch = useAppDispatch();

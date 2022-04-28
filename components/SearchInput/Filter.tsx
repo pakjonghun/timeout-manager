@@ -1,5 +1,8 @@
-import { NextPage } from "next";
 import { useCallback, useState } from "react";
+import { NextPage } from "next";
+import Select from "./Select";
+import Calendar from "./Calendar";
+import DatePickForm from "./Calendar/DatePickForm";
 import { CalendarSelect, RecordStandard } from "@libs/client/types";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import {
@@ -8,12 +11,9 @@ import {
   resetDates,
   setStandard,
 } from "@store/reducer/search";
-import Calendar from "./Calendar";
-import DatePickForm from "./Calendar/DatePickForm";
-import Select from "./Select";
+import { useGetRecordsByDayQuery } from "@store/services/search";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
 import { format } from "date-fns";
-import { useGetRecordsByDayQuery } from "@store/services/search";
 
 interface props {
   onClose: (event: React.MouseEvent) => void;
@@ -21,10 +21,15 @@ interface props {
 
 const Filter: NextPage<props> = ({ onClose }) => {
   const dispatch = useAppDispatch();
+  const role = useAppSelector((state) => state.user.role);
   const standard = useAppSelector((state) => state.search.standard);
   const [tempStandard, setTempStandard] = useState<RecordStandard>(standard);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isCaneldarShow, setIsCalendarShow] = useState(false);
+  const { refetch } = useGetRecordWorkTimesQuery();
+  const { refetch: refetchByDay } = useGetRecordsByDayQuery();
+
+  const isUser = role && role === "USER";
 
   const onStandardSelect = useCallback(
     (event: React.FormEvent<HTMLUListElement>) => {
@@ -53,9 +58,6 @@ const Filter: NextPage<props> = ({ onClose }) => {
     },
     [dispatch]
   );
-
-  const { refetch } = useGetRecordWorkTimesQuery();
-  const { refetch: refetchByDay } = useGetRecordsByDayQuery();
 
   const onApply = useCallback(() => {
     dispatch(setStandard(tempStandard));
@@ -133,15 +135,19 @@ const Filter: NextPage<props> = ({ onClose }) => {
           />
         </div>
         <div>
-          <h3 className="ml-1 mb-2 font-md text-gray-500">Search Standard</h3>
-          <div>
-            <Select
-              selectOption={tempStandard}
-              isSelectOpen={isSelectOpen}
-              onSelect={onStandardSelect}
-              onToggleOption={onToggleSelect}
-            />
-          </div>
+          {!isUser && (
+            <h3 className="ml-1 mb-2 font-md text-gray-500">Search Standard</h3>
+          )}
+          {!isUser && (
+            <div>
+              <Select
+                selectOption={tempStandard}
+                isSelectOpen={isSelectOpen}
+                onSelect={onStandardSelect}
+                onToggleOption={onToggleSelect}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-2 gap-5">

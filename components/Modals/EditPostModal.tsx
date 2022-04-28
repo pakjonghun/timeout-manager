@@ -1,17 +1,14 @@
+import { useCallback, useEffect } from "react";
 import { NextPage } from "next";
 import Input from "@components/Input";
 import Modal from "@components/Modal";
-import { AnimatePresence } from "framer-motion";
 import ModalTitle from "@components/ModalTitle";
-import ModalButtons from "./ModalButtons";
-import { useForm } from "react-hook-form";
-import {
-  useAddNoticeMutation,
-  useEditNoticeMutation,
-} from "@store/services/notice";
-import { useCallback, useEffect } from "react";
-import { toast } from "react-toastify";
 import ErrorMessage from "@components/ErrorMessage";
+import ModalButtons from "./ModalButtons";
+import { useEditNoticeMutation } from "@store/services/notice";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { AnimatePresence } from "framer-motion";
 
 interface props {
   isShow: boolean;
@@ -49,7 +46,7 @@ const EditPost: NextPage<props> = ({
     setValue("description", preDesc);
   }, [setValue, preTitle, preDesc]);
 
-  const [editNoticeMutate, { isError }] = useEditNoticeMutation();
+  const [editNoticeMutate, { isError, isLoading }] = useEditNoticeMutation();
 
   useEffect(() => {
     if (isError) toast.error("공지글 편집이 실패했습니다.");
@@ -106,7 +103,11 @@ const EditPost: NextPage<props> = ({
               styles={{ marginTop: "3px", height: "20rem" }}
             />
             <ErrorMessage message={errors.description?.message} />
-            <ModalButtons onClose={onClose} onConfirm={onConfirm} />
+            <ModalButtons
+              isLoading={isLoading}
+              onClose={onClose}
+              onConfirm={onConfirm}
+            />
           </form>
         </Modal>
       )}

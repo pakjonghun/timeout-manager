@@ -1,4 +1,4 @@
-import { Prisma, Users, WorkTimes } from "@prisma/client";
+import { Posts, Prisma, Users, WorkTimes } from "@prisma/client";
 
 export type CommonResponse = {
   success: boolean;
@@ -20,12 +20,19 @@ export type MyStatusResponse = {
   };
 } & CommonResponse;
 
+export type MyAvatarResponse = {
+  user?: Pick<Users, "avatar"> & {};
+} & CommonResponse;
+
 export type MyDetailInfoResponse = {
   user?: Pick<Users, "id" | "status" | "role"> &
     Partial<Pick<Users, "avatar" | "createdAt" | "email" | "name" | "phone">>;
 } & CommonResponse;
 
-export type MeResponse = MyStatusResponse | MyDetailInfoResponse;
+export type MeResponse =
+  | MyStatusResponse
+  | MyDetailInfoResponse
+  | MyAvatarResponse;
 
 export type WithUserRecord = Omit<
   WorkTimes,
@@ -57,4 +64,12 @@ export type RecordByDay = Prisma.PickArray<
 export type GetRecordByDayResponse = {
   records?: RecordByDay[];
   totalPage?: number;
+} & CommonResponse;
+
+export type GetNoticesResponse = {
+  posts?: (Posts & { user: Pick<Users, "name"> })[];
+} & CommonResponse;
+
+export type GetNoticeResponse = {
+  post?: Posts & { user: Pick<Users, "name" | "role"> };
 } & CommonResponse;

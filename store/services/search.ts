@@ -1,12 +1,16 @@
 import { RootState } from "..";
+import { queryMaker } from "@libs/client/utils";
 import { GetRecordByDayResponse } from "@libs/server/types/dataTypes";
 import { api } from "./index";
-import { queryMaker } from "@libs/client/utils";
+
 const search = api.injectEndpoints({
   endpoints: (build) => ({
     getRecordsByDay: build.query<GetRecordByDayResponse, void>({
       async queryFn(_, api, __, fetch) {
         const state = api.getState() as RootState;
+        const curStandard = state.search.standard;
+        if (curStandard === "name") return { data: { success: false } };
+
         const startDate = state.search.startDate;
         const endDate = state.search.endDate;
         const dates = state.search.dates;

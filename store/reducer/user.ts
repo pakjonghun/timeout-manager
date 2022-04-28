@@ -26,7 +26,10 @@ const userSlice = createSlice({
     setAvatar: (state, { payload }: PayloadAction<string>) => {
       state.avatar = payload;
     },
+    reset: (state) => {
+      state = initialState;
+    },
   },
 });
-export const { setRole, setAvatar } = userSlice.actions;
+export const { reset, setRole, setAvatar } = userSlice.actions;
 export default userSlice.reducer;

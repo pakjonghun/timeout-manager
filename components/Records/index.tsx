@@ -1,17 +1,17 @@
 import { useCallback, useEffect } from "react";
+import { NextPage } from "next";
 import SubMenu from "@components/Records/SubMenu";
 import EditRecordModal from "@components/Modals/EditRecordModal";
 import RecordTable from "@components/Records/RecordTable";
 import RecordDeleteModal from "@components/Modals/RecordDeleteModal";
 import PageNationButtons from "@components/PageNationButtons";
-import useModal from "@libs/client/useModal";
 import usePage from "@libs/client/usePage";
+import useModal from "@libs/client/useModal";
 import { joinStyleClass } from "@libs/client/utils";
 import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { useDeleteRecordMutation } from "@store/services/records";
-import { toast } from "react-toastify";
 import { reset } from "@store/reducer/record";
-import { NextPage } from "next";
+import { toast } from "react-toastify";
 
 interface props {
   isSubMenuShow?: boolean;

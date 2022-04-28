@@ -1,15 +1,19 @@
-import { toggleFilter } from "@store/reducer/search";
-import { NextPage } from "next";
 import { useCallback } from "react";
+import { NextPage } from "next";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
+import { toggleFilter } from "@store/reducer/search";
 import { UseFormRegisterReturn } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { joinStyleClass } from "@libs/client/utils";
 
 interface props {
   register: UseFormRegisterReturn;
 }
 
 const SearchInput: NextPage<props> = ({ register }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  const role = useAppSelector((state) => state.user.role);
+  const isUser = role && role === "USER";
 
   const toggleFilterFunc = useCallback(() => {
     dispatch(toggleFilter());
@@ -27,8 +31,15 @@ const SearchInput: NextPage<props> = ({ register }) => {
       <input
         {...register}
         type="text"
-        placeholder="Search"
-        className="w-full py-3 placeholder:text-gray-400 focus:ring-0 border-none bg-transparent text-sm"
+        placeholder={
+          isUser
+            ? "일반 사용자는 오른쪽에 있는 필터 기능만 이용 가능합니다 →"
+            : "검색하려는 사용자 이름을 입력하세요."
+        }
+        className={joinStyleClass(
+          "w-full py-3 placeholder:text-gray-400 focus:ring-0 border-none bg-transparent text-sm",
+          isUser ? "pointer-events-none" : ""
+        )}
       />
       <span
         onClick={toggleFilterFunc}

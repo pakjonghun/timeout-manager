@@ -1,19 +1,19 @@
+import { useCallback, useEffect, useMemo } from "react";
 import Timer from "@components/Timer";
 import Layout from "@components/Layout";
 import HeaderRow from "@components/Row/HeaderRow";
+import PrivateLoader from "@components/PrivateLoader";
 import TimerRecordRow from "@components/Row/TimerRecordRow";
 import TimeoutConfirmModal from "@components/Modals/TimeoutConfirmModal";
-import { useCallback, useEffect, useMemo } from "react";
-import { useAppSelector } from "@libs/client/useRedux";
 import useModal from "@libs/client/useModal";
-import { toast } from "react-toastify";
 import { getDuration } from "@libs/client/utils";
+import { useAppSelector } from "@libs/client/useRedux";
 import { useGetStatusQuery } from "@store/services/user";
 import {
   useEndWorkMutation,
   useGetTimerWorkTimesQuery,
 } from "@store/services/timerWorkTime";
-import PrivateLoader from "@components/PrivateLoader";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const { onHideModal } = useModal("confirmTimer");

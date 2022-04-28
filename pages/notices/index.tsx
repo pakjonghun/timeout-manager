@@ -1,14 +1,13 @@
 import { useCallback } from "react";
-import AddPostModal from "@components/Modals/AddPostModal";
 import Layout from "@components/Layout";
-import HeaderRow from "@components/Row/HeaderRow";
 import PostRow from "@components/Row/PostRow";
-import useModal from "@libs/client/useModal";
+import HeaderRow from "@components/Row/HeaderRow";
+import AddPostModal from "@components/Modals/AddPostModal";
 import client from "@libs/server/client";
-import { Posts, Users } from "@prisma/client";
-import { GetStaticProps, NextPage } from "next";
-import { useGetMeQuery } from "@store/services/user";
+import useModal from "@libs/client/useModal";
 import { postThead } from "@libs/client/constants";
+import { GetStaticProps, NextPage } from "next";
+import { Posts, Users } from "@prisma/client";
 
 interface IWithUserPosts extends Posts {
   user: Pick<Users, "name">;
@@ -19,13 +18,11 @@ interface props {
 }
 
 const Post: NextPage<props> = ({ posts }) => {
-  const { isShowModal, onHideModal, onShowModal } = useModal("postAdd");
+  const { isShowModal, onHideModal } = useModal("postAdd");
 
   const onConfirm = useCallback(() => {
     onHideModal();
   }, [onHideModal]);
-
-  const { data: me } = useGetMeQuery();
 
   return (
     <Layout title="공지 게시판" canGoBack={false}>

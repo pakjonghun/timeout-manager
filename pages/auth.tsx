@@ -78,6 +78,7 @@ const Auth = () => {
           className="flex flex-col space-y-3"
         >
           <Input
+            classes={"placeholder:text-xs"}
             register={register("authNumber", {
               valueAsNumber: true,
               required: "인증번호를 입력하세요.",
@@ -87,7 +88,7 @@ const Auth = () => {
               },
             })}
             label="authNumber"
-            placeholder="5자리 숫자"
+            placeholder="본인 휴대폰으로 전송된 5자리 숫자를 입력하세요."
             id="authNumber"
           />
           <ErrorMessage classes="ml-1" message={errors.authNumber?.message} />

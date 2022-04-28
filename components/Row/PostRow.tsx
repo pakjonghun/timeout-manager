@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { NextPage } from "next";
 import { getFullDate, joinStyleClass } from "@libs/client/utils";
-import Link from "next/link";
 import { Posts, Users } from "@prisma/client";
+import { useAppSelector } from "@libs/client/useRedux";
 
 interface props {
   data: Posts & { user: Pick<Users, "name"> };
@@ -11,8 +12,10 @@ interface props {
 }
 
 const PostRow: NextPage<props> = ({ index, data, styles, isPickable }) => {
+  const role = useAppSelector((state) => state.user.role);
+
   return (
-    <Link href={`/notices/${data.id}`}>
+    <Link href={`/${role === "ADMIN" ? "admin" : "notices"}/${data.id}`}>
       <a>
         <li
           style={styles}

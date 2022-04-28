@@ -14,7 +14,7 @@ const handler = async (
 ) => {
   const {
     page,
-    createdAt,
+    createdAt = "desc",
     end,
     start,
     duration,
@@ -25,6 +25,18 @@ const handler = async (
     dates,
   } = req.query as GetRecordRequest;
 
+  let beforeDate = startDate;
+  let afterDate = endDate;
+
+  if (startDate && endDate) {
+    const startTime = new Date(startDate).getTime();
+    const endTime = new Date(endDate).getTime();
+    if (startTime > endTime) {
+      beforeDate = endDate;
+      afterDate = startDate;
+    }
+  }
+
   const searchCondition = {
     ...(keyWord &&
       keyWord.toString().trim() && {
@@ -34,16 +46,19 @@ const handler = async (
           },
         },
       }),
-    ...(startDate && {
-      createdAt: {
-        gte: new Date(startDate),
-      },
-    }),
-    ...(endDate && {
-      createdAt: {
-        lte: new Date(endDate),
-      },
-    }),
+    ...(beforeDate &&
+      afterDate && {
+        createdAt: {
+          gte: new Date(beforeDate),
+          lte: addDays(new Date(afterDate), 1),
+        },
+      }),
+    ...(beforeDate &&
+      !afterDate && {
+        createdAt: {
+          gte: addDays(new Date(beforeDate), 1),
+        },
+      }),
   };
 
   const OR = [] as { createdAt: { gte: Date; lte: Date } }[];
@@ -71,6 +86,10 @@ const handler = async (
   };
 
   if (req.method === "GET") {
+    if (req.session.user?.role === "USER" && keyWord?.trim()) {
+      return res.status(400).json({ success: false });
+    }
+
     if (!page || +page < 1) return res.status(400).json({ success: false });
 
     if (req.session?.user?.role === "USER") {
@@ -96,7 +115,6 @@ const handler = async (
           userId: req.session?.user?.id,
         },
       });
-
       return res.json({
         records,
         success: true,

@@ -8,7 +8,7 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<MeResponse>
 ) => {
-  const { status } = req.query;
+  const { status, layout } = req.query;
 
   if (status) {
     const user = await client.users.findUnique({
@@ -56,6 +56,17 @@ const handler = async (
 
     return res.json({ success: true, user });
   } else {
+    if (layout) {
+      const user = await client.users.findUnique({
+        where: { id: req.session!.user!.id },
+        select: {
+          avatar: true,
+        },
+      });
+      if (!user) return res.status(400).json({ success: false });
+      return res.json({ success: true, user });
+    }
+
     const user = await client.users.findUnique({
       where: { id: req.session!.user!.id },
       select: {

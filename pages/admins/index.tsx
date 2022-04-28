@@ -1,15 +1,15 @@
 import { useCallback } from "react";
+import { NextPage } from "next";
 import AddPostModal from "@components/Modals/AddPostModal";
 import Layout from "@components/Layout";
 import HeaderRow from "@components/Row/HeaderRow";
 import PostRow from "@components/Row/PostRow";
 import useModal from "@libs/client/useModal";
-import client from "@libs/server/client";
-import { Posts, Role, Users } from "@prisma/client";
-import { GetServerSideProps, NextPage, NextPageContext } from "next";
-import { useGetMeQuery } from "@store/services/user";
 import { postThead } from "@libs/client/constants";
-import { withSSRCookie } from "@libs/server/withCookie";
+import { Posts, Role, Users } from "@prisma/client";
+import { useGetAllPostsQuery } from "@store/services/notice";
+import { useAppSelector } from "@libs/client/useRedux";
+import PrivateLoader from "@components/PrivateLoader";
 
 interface IWithUserPosts extends Posts {
   user: Pick<Users, "name">;
@@ -20,8 +20,10 @@ interface props {
   role: Role;
 }
 
-const Post: NextPage<props> = ({ posts, role }) => {
+const Post: NextPage<props> = () => {
+  const { data: posts } = useGetAllPostsQuery();
   const { isShowModal, onHideModal, onShowModal } = useModal("postAdd");
+  const role = useAppSelector((state) => state.user.role);
 
   const onConfirm = useCallback(() => {
     onHideModal();
@@ -29,6 +31,7 @@ const Post: NextPage<props> = ({ posts, role }) => {
 
   return (
     <Layout title="공지 게시판" canGoBack={false}>
+      <PrivateLoader />
       <AddPostModal
         onConfirm={onConfirm}
         onClose={onHideModal}
@@ -38,16 +41,17 @@ const Post: NextPage<props> = ({ posts, role }) => {
       <div className="flex flex-col w-full">
         <ul className="px-5 relative pb-10 divide-y-[1px] mt-5 max-h-[60vh] overflow-y-auto text-sm rounded-md">
           <HeaderRow thead={postThead} size="md" />
-          {posts.map((post, index) => {
-            return (
-              <PostRow
-                key={post.id}
-                data={post}
-                index={index}
-                isPickable={true}
-              />
-            );
-          })}
+          {posts?.posts &&
+            posts.posts.map((post, index) => {
+              return (
+                <PostRow
+                  key={post.id}
+                  data={post}
+                  index={index}
+                  isPickable={true}
+                />
+              );
+            })}
         </ul>
         <div className="flex justify-end mt-5">
           {role === "ADMIN" && (
@@ -65,29 +69,3 @@ const Post: NextPage<props> = ({ posts, role }) => {
 };
 
 export default Post;
-
-export const getServerSideProps: GetServerSideProps = withSSRCookie(
-  async ({ req }: NextPageContext) => {
-    const role = req?.session.user?.role;
-
-    const posts = await client.posts.findMany({
-      include: {
-        user: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return {
-      props: {
-        posts: JSON.parse(JSON.stringify(posts)),
-        role,
-      },
-    };
-  }
-);

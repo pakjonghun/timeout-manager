@@ -8,15 +8,13 @@ import { useGetMeQuery } from "@store/services/user";
 import { format } from "date-fns";
 
 const Profile = () => {
+  const { data: me } = useGetMeQuery("");
+  const avatar = useAppSelector((state) => state.user.avatar);
   const { isShowModal, onHideModal, onShowModal } = useModal("editProfile");
 
   const onEditProfile = useCallback(() => {
     onShowModal();
   }, [onShowModal]);
-
-  const avatar = useAppSelector((state) => state.user.avatar);
-
-  const { data: me } = useGetMeQuery();
 
   return (
     <Layout title="개인정보" canGoBack={false}>
@@ -27,7 +25,11 @@ const Profile = () => {
         <div className="flex flex-col items-center">
           <div className="grid grid-cols-[1fr,_2fr] mb-10">
             <div className="w-fit p-[0.3rem] border-yellow-500 rounded-full border-4">
-              <img className="rounded-full" src={avatar} alt="avatar" />
+              <img
+                className="w-16 h-16 rounded-full"
+                src={avatar}
+                alt="avatar"
+              />
             </div>
             <div className="flex flex-col justify-center pl-10">
               <span className="font-medium text-gray-600">{}</span>

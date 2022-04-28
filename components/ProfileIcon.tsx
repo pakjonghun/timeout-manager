@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import { Role } from "@prisma/client";
 import { useAppSelector } from "@libs/client/useRedux";
+import { Role } from "@prisma/client";
 
 interface props {
   name: string;
