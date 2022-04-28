@@ -16,7 +16,7 @@ const Icon: NextPage<props> = ({
   size = "sm",
 }) => {
   const sizes = {
-    sm: "p-[0.4rem]",
+    ["sm" as string]: "p-[0.4rem]",
     md: "p-[0.6rem]",
     lg: "p-[0.8rem]",
   };

@@ -1,62 +1,47 @@
+import { useCallback } from "react";
 import Layout from "@components/Layout";
-import TimerRecordRow from "@components/Row/TimerRecordRow";
-import { RecordRowHeaderType } from "@libs/client/types/dataTypes";
-import gravatar from "gravatar";
-import { useCallback, useState } from "react";
-import EditProfileModal from "@components/Modals/EditProfileModal";
-import HeaderRow from "@components/Row/HeaderRow";
-import useSWR from "swr";
-import { TimeType } from "@libs/server/types";
 import PrivateLoader from "@components/PrivateLoader";
-
-const options: RecordRowHeaderType = {
-  start: { colSpan: 1 },
-  end: { colSpan: 1 },
-  duration: { colSpan: 1 },
-};
-
-const me = {
-  name: "pak",
-  role: "ADMIN",
-};
+import EditProfileModal from "@components/Modals/EditProfileModal";
+import useModal from "@libs/client/useModal";
+import { useAppSelector } from "@libs/client/useRedux";
+import { useGetMeQuery } from "@store/services/user";
+import { format } from "date-fns";
 
 const Profile = () => {
-  const [showEditProfileModal, setShowAddPostModal] = useState(false);
-  const onCloseModal = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    if (event.target !== event.currentTarget) return;
-    setShowAddPostModal(false);
-  }, []);
+  const { isShowModal, onHideModal, onShowModal } = useModal("editProfile");
 
   const onEditProfile = useCallback(() => {
-    setShowAddPostModal(true);
-  }, []);
+    onShowModal();
+  }, [onShowModal]);
 
-  const { data: times } = useSWR<TimeType>("/api/times");
+  const avatar = useAppSelector((state) => state.user.avatar);
+
+  const { data: me } = useGetMeQuery();
 
   return (
     <Layout title="개인정보" canGoBack={false}>
       <PrivateLoader />
-      <EditProfileModal onClose={onCloseModal} isShow={showEditProfileModal} />
+      <EditProfileModal onClose={onHideModal} isShow={isShowModal} />
 
       <div className="mt-24 sm:mt-32 lg:mt-40;">
         <div className="flex flex-col items-center">
           <div className="grid grid-cols-[1fr,_2fr] mb-10">
             <div className="w-fit p-[0.3rem] border-yellow-500 rounded-full border-4">
-              <img
-                className="rounded-full"
-                src={gravatar.url(me.name, { s: "60", d: "retro" })}
-                alt="avatar"
-              />
+              <img className="rounded-full" src={avatar} alt="avatar" />
             </div>
             <div className="flex flex-col justify-center pl-10">
-              <span className="font-medium text-gray-600">매니저</span>
-              <span className="font-md text-gray-400">2022-10-13 보직</span>
+              <span className="font-medium text-gray-600">{}</span>
+              {me?.user?.createdAt && (
+                <span className="font-md text-gray-400">
+                  {format(new Date(me?.user?.createdAt), "yyyy-MM-dd")}보직
+                </span>
+              )}
             </div>
           </div>
           <div className="flex flex-col justify-center items-center space-y-2 font-md text-gray-600">
-            <span>이름</span>
-            <span>핸드폰</span>
-            <span>이메일</span>
+            {me?.user?.name && <span>{me.user.name}</span>}
+            {me?.user?.phone && <span>{me.user.phone}</span>}
+            {me?.user?.email && <span>{me.user.email}</span>}
           </div>
           <button
             onClick={onEditProfile}
@@ -65,16 +50,6 @@ const Profile = () => {
             Edit Profile
           </button>
         </div>
-        <ul className="mt-10 divide-y-[1px] max-h-80 overflow-y-auto">
-          {!!times?.times?.length && (
-            <ul className="w-[17rem] max-h-96 mx-auto overflow-y-auto divide-y-[1px]">
-              <HeaderRow options={options} size="xs" />
-              {times.times.map((t) => (
-                <TimerRecordRow key={t.id} time={t} />
-              ))}
-            </ul>
-          )}
-        </ul>
       </div>
     </Layout>
   );

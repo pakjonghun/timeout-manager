@@ -2,10 +2,10 @@ import { NextPage } from "next";
 import AscendButton from "./AscendButton";
 import DescendButton from "./DescendButton";
 import SortToggleButton from "./SortToggleButton";
-import { SortType } from "@libs/server/types";
+import { SortValue } from "@libs/client/types";
 
 interface props {
-  sort: SortType | null;
+  sort: SortValue | null;
   id: string;
 }
 

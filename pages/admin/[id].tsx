@@ -13,7 +13,7 @@ import EditPost from "@components/Modals/EditPostModal";
 import DeletePost from "@components/Modals/DeletePostModal";
 import { useDeleteNoticeMutation } from "@store/services/notice";
 import { toast } from "react-toastify";
-import { useAppSelector } from "@libs/client/useRedux";
+
 
 interface WithUserPost extends Posts {
   user: {
@@ -29,6 +29,28 @@ interface props {
 const PostDetail: NextPage<props> = ({ post }) => {
   const router = useRouter();
 
+  const { isShowModal, onHideModal, onShowModal } = useModal("postEdit");
+  const { onHideModal: onHideDeleteModal, onShowModal: onShowDeleteModal } =
+    useModal("postDelete");
+
+  const [deleteNoticeMutate, { isError }] = useDeleteNoticeMutation();
+
+  useEffect(() => {
+    if (isError) toast.error("공지글 삭제가 실패했습니다.");
+  }, [isError]);
+
+  const onConfirmEdit = useCallback(() => {
+    onHideModal();
+  }, [onHideModal]);
+
+  const confirmDelete = useCallback(() => {
+    deleteNoticeMutate({ id: post.id });
+    onHideDeleteModal();
+    router.push("/notices");
+  }, [post, router, onHideDeleteModal, deleteNoticeMutate]);
+
+  const { data: me } = useGetMeQuery();
+
   if (router.isFallback) {
     return (
       <h1 className="w-screen h-screen flex justify-center items-center text-4xl font-bold">
@@ -39,6 +61,19 @@ const PostDetail: NextPage<props> = ({ post }) => {
 
   return (
     <Layout>
+      <EditPost
+        id={post.id}
+        preTitle={post.title}
+        preDesc={post.description}
+        onClose={onHideModal}
+        onConfirm={onConfirmEdit}
+        isShow={isShowModal}
+      />
+      <DeletePost
+        title="정말 삭제 하시겠습니까?"
+        message="삭제 후 되돌릴 수 없습니다."
+        onConfirm={confirmDelete}
+      />
       <section className="w-[90%] lg:w-[95%] p-3 space-y-5 bg-purple-100 roundShadow-md">
         <header>
           <div className="flex items-center justify-between px-2 font-md text-gray-500">
@@ -61,6 +96,24 @@ const PostDetail: NextPage<props> = ({ post }) => {
             )}`}
           />
         </main>
+        {me?.user?.role === "ADMIN" && (
+          <div className="flex justify-end mt-5">
+            <>
+              <button
+                onClick={() => onShowModal()}
+                className="py-2 px-5 self-end mr-8 bg-green-500 text-green-100 roundShadow-md transition scale font-md text-sm"
+              >
+                편집하기
+              </button>
+              <button
+                onClick={() => onShowDeleteModal()}
+                className="py-2 px-5 self-end mr-8 bg-green-500 text-green-100 roundShadow-md transition scale font-md text-sm"
+              >
+                삭제하기
+              </button>
+            </>
+          </div>
+        )}
       </section>
     </Layout>
   );

@@ -1,16 +1,11 @@
-import { useEffect } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import Menus from "./Menus";
 import Logo from "@components/Layout/Logo";
-import Spin from "@components/Spin";
 import Title from "@components/Title";
 import { sideMenus } from "@libs/client/constants";
 import { mainMenus } from "@libs/client/constants";
-import { toast } from "react-toastify";
-import { useAppDispatch } from "@libs/client/useRedux";
-import { useGetMeQuery } from "@store/services/user";
-import { setRole } from "@store/reducer/user";
-import Menus from "./Menus";
+import { useAppSelector } from "@libs/client/useRedux";
 
 interface props {
   children: React.ReactNode;
@@ -27,6 +22,8 @@ const Layout: NextPage<props> = ({
 }) => {
   const router = useRouter();
 
+  const avatar = useAppSelector((state) => state.user.avatar);
+
   return (
     <div className="max-w-screen-lg h-screen min-h-max mx-auto">
       <Title title={title} />
@@ -41,7 +38,7 @@ const Layout: NextPage<props> = ({
             </ul>
 
             <ul className="flex items-center space-x-5">
-              <Menus menus={sideMenus} />
+              {avatar && <Menus menus={sideMenus(avatar)} />}
             </ul>
           </nav>
         </header>

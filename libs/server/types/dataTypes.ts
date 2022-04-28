@@ -21,7 +21,8 @@ export type MyStatusResponse = {
 } & CommonResponse;
 
 export type MyDetailInfoResponse = {
-  user?: Pick<Users, "id" | "status" | "role">;
+  user?: Pick<Users, "id" | "status" | "role"> &
+    Partial<Pick<Users, "avatar" | "createdAt" | "email" | "name" | "phone">>;
 } & CommonResponse;
 
 export type MeResponse = MyStatusResponse | MyDetailInfoResponse;

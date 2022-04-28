@@ -10,7 +10,7 @@ const notice = api.injectEndpoints({
   endpoints: (build) => ({
     addNotice: build.mutation<CommonResponse, AddNoticeRequest>({
       query: (body) => ({
-        url: "notice",
+        url: "notices",
         method: "POST",
         body,
       }),
@@ -20,14 +20,14 @@ const notice = api.injectEndpoints({
       Partial<AddNoticeRequest> & { id: number }
     >({
       query: ({ id, ...body }) => ({
-        url: `notice/${id}`,
+        url: `notices/${id}`,
         method: "PATCH",
         body,
       }),
     }),
     deleteNotice: build.mutation<CommonResponse, { id: number }>({
       query: ({ id }) => ({
-        url: `notice/${id}`,
+        url: `notices/${id}`,
         method: "DELETE",
       }),
     }),

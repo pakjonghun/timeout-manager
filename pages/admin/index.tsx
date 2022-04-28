@@ -5,10 +5,11 @@ import HeaderRow from "@components/Row/HeaderRow";
 import PostRow from "@components/Row/PostRow";
 import useModal from "@libs/client/useModal";
 import client from "@libs/server/client";
-import { Posts, Users } from "@prisma/client";
-import { GetStaticProps, NextPage } from "next";
+import { Posts, Role, Users } from "@prisma/client";
+import { GetServerSideProps, NextPage, NextPageContext } from "next";
 import { useGetMeQuery } from "@store/services/user";
 import { postThead } from "@libs/client/constants";
+import { withSSRCookie } from "@libs/server/withCookie";
 
 interface IWithUserPosts extends Posts {
   user: Pick<Users, "name">;
@@ -16,16 +17,15 @@ interface IWithUserPosts extends Posts {
 
 interface props {
   posts: IWithUserPosts[];
+  role: Role;
 }
 
-const Post: NextPage<props> = ({ posts }) => {
+const Post: NextPage<props> = ({ posts, role }) => {
   const { isShowModal, onHideModal, onShowModal } = useModal("postAdd");
 
   const onConfirm = useCallback(() => {
     onHideModal();
   }, [onHideModal]);
-
-  const { data: me } = useGetMeQuery();
 
   return (
     <Layout title="공지 게시판" canGoBack={false}>
@@ -49,6 +49,16 @@ const Post: NextPage<props> = ({ posts }) => {
             );
           })}
         </ul>
+        <div className="flex justify-end mt-5">
+          {role === "ADMIN" && (
+            <button
+              onClick={() => onShowModal()}
+              className="py-2 px-5 self-end mr-8 bg-green-500 text-green-100 roundShadow-md transition scale font-md text-sm"
+            >
+              글쓰기
+            </button>
+          )}
+        </div>
       </div>
     </Layout>
   );
@@ -56,24 +66,28 @@ const Post: NextPage<props> = ({ posts }) => {
 
 export default Post;
 
-export const getStaticProps: GetStaticProps = async () => {
-  const posts = await client.posts.findMany({
-    include: {
-      user: {
-        select: {
-          name: true,
+export const getServerSideProps: GetServerSideProps = withSSRCookie(
+  async ({ req }: NextPageContext) => {
+    const role = req?.session.user?.role;
+
+    const posts = await client.posts.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  return {
-    props: {
-      posts: JSON.parse(JSON.stringify(posts)),
-    },
-    revalidate: 60 * 60 * 24,
-  };
-};
+    return {
+      props: {
+        posts: JSON.parse(JSON.stringify(posts)),
+        role,
+      },
+    };
+  }
+);

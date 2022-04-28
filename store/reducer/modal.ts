@@ -6,7 +6,8 @@ export type Modal =
   | "recordDelete"
   | "postAdd"
   | "postEdit"
-  | "postDelete";
+  | "postDelete"
+  | "editProfile";
 
 type ModalState = {
   [key: string]: boolean;
@@ -19,6 +20,7 @@ const initialState: ModalState = {
   postAdd: false,
   postEdit: false,
   postDelete: false,
+  editProfile: false,
 };
 
 const modalSlice = createSlice({

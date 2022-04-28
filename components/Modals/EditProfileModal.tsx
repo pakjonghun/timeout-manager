@@ -3,13 +3,60 @@ import Input from "@components/Input";
 import Modal from "@components/Modal";
 import { AnimatePresence } from "framer-motion";
 import ModalTitle from "@components/ModalTitle";
+import { useForm } from "react-hook-form";
+import { useGetMeQuery } from "@store/services/user";
+import { useCallback, useEffect, useState } from "react";
+import ModalButtons from "./ModalButtons";
+import AvatarInput from "@components/AvatarInput";
+import { useAppDispatch } from "@libs/client/useRedux";
+import { setAvatar } from "@store/reducer/user";
 
 interface props {
   isShow: boolean;
   onClose: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
+interface form {
+  name?: string;
+  phone?: string;
+  email?: string;
+  avatar?: FileList;
+}
+
 const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
+  const dispatch = useAppDispatch();
+  const { data: me, isSuccess } = useGetMeQuery();
+  const [avatarPrevies, setAvatarPreview] = useState("");
+  const { register, handleSubmit, watch, setValue } = useForm<form>({
+    mode: "all",
+  });
+
+  const previewImage = watch("avatar");
+  useEffect(() => {
+    if (isSuccess && me.user?.avatar) {
+      dispatch(setAvatar(me.user.avatar));
+    }
+
+    const user = me?.user;
+    if (isSuccess) {
+      setValue("name", user?.name);
+      setValue("email", user?.email);
+      setValue("phone", user?.phone);
+    }
+  }, [me, isSuccess, dispatch]);
+
+  useEffect(() => {
+    if (previewImage?.length) {
+      setAvatarPreview(URL.createObjectURL(previewImage[0]));
+    }
+  }, [previewImage]);
+
+  const onValid = useCallback((values: form) => {
+    console.log(values);
+  }, []);
+
+  const onEditConfirm = useCallback(() => {}, []);
+
   return (
     <AnimatePresence>
       {isShow && (
@@ -19,7 +66,7 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
             role="success"
             indicator={
               <svg
-                className="w-5 h-5 fill-green-500"
+                className="w-5 h-5 fill-green-100"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
               >
@@ -27,8 +74,14 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
               </svg>
             }
           />
-          <form className="space-y-5 py-4">
+          <form onSubmit={handleSubmit(onValid)} className="space-y-5 py-4">
+            <AvatarInput
+              file={avatarPrevies}
+              register={register("avatar")}
+              id="editAvatar"
+            />
             <Input
+              register={register("name")}
               styles={{ marginTop: "3px" }}
               label="Name"
               placeholder="Name"
@@ -36,6 +89,7 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
               size="lg"
             />
             <Input
+              register={register("phone")}
               styles={{ marginTop: "3px" }}
               label="Phone"
               placeholder="Phone"
@@ -43,28 +97,14 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
               size="lg"
             />
             <Input
+              register={register("email")}
               styles={{ marginTop: "3px" }}
               label="Email"
               placeholder="Email"
               id="email"
               size="lg"
             />
-            <div className="grid grid-cols-2 gap-5">
-              <button
-                type="button"
-                onClick={onClose}
-                className="py-2 px-5 bg-gray-200 roundShadow-md font-medium text-sm scale"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                // onClick={onConfirmModal}
-                className="py-2 px-5 bg-green-500 roundShadow-md font-medium text-sm scale"
-              >
-                Confirm
-              </button>
-            </div>
+            <ModalButtons onClose={onClose} onConfirm={onEditConfirm} />
           </form>
         </Modal>
       )}

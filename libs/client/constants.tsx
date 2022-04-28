@@ -16,9 +16,10 @@ export const mainMenus = [
   { name: "HOME", link: "/" },
   { name: "NOTICE", link: "/notices" },
   { name: "RECORD", link: "/records" },
+  { name: "ADMIN", link: "/admin" },
 ];
 
-export const sideMenus = [
+export const sideMenus = (avatar: string) => [
   {
     name: (
       <svg
@@ -33,13 +34,7 @@ export const sideMenus = [
     link: "/search",
   },
   {
-    name: (
-      <img
-        className="rounded-full"
-        src={gravatar.url("profile", { s: "33", d: "retro" })}
-        alt="profile"
-      />
-    ),
+    name: <img className="rounded-full" src={avatar} alt="profile" />,
     link: "/profile",
   },
   {

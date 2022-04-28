@@ -1,19 +1,19 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import client from "@libs/server/client";
-import { MethodsType } from "./types";
 export type HandlerType = (req: NextApiRequest, res: NextApiResponse) => void;
+type Methods = "POST" | "GET" | "PATCH" | "DELETE" | "PUT";
 
-type ArgsType = {
+type Args = {
   isPrivate?: boolean;
-  methods: MethodsType[];
+  methods: Methods[];
   handler: HandlerType;
 };
 
 const withMethod =
-  (args: ArgsType) => async (req: NextApiRequest, res: NextApiResponse) => {
+  (args: Args) => async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { isPrivate = true, methods, handler } = args;
-      const isMethodMatch = methods.includes(req.method! as MethodsType);
+      const isMethodMatch = methods.includes(req.method! as Methods);
       if (!isMethodMatch) return res.status(405).json({ success: false });
       if (isPrivate && !req.session.user) {
         return res.status(401).json({ success: false });

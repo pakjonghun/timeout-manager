@@ -1,3 +1,4 @@
+import gravatar from "gravatar";
 import { startOfMonth, startOfWeek, getWeeksInMonth, min } from "date-fns";
 
 export const joinStyleClass = (...args: string[]) => args.join(" ");
@@ -79,4 +80,11 @@ export const queryMaker = (args: { key: string; value: string | number }[]) => {
   const url = new URLSearchParams();
   args.forEach(({ key, value }) => url.append(key, value + ""));
   return url.toString();
+};
+
+export const getAvatar = (size: number) => {
+  return `http://${gravatar.url("name", {
+    s: size + "" || "34",
+    d: "retro",
+  })}`;
 };

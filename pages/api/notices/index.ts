@@ -17,7 +17,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     },
   });
-  res.unstable_revalidate("/path-to-notices");
   return res.status(201).json({ success: true });
 };
 

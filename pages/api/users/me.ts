@@ -62,10 +62,15 @@ const handler = async (
         id: true,
         status: true,
         role: true,
+        name: true,
+        email: true,
+        phone: true,
+        createdAt: true,
+        avatar: true,
       },
     });
     if (!user) return res.status(400).json({ success: false });
-    res.json({ success: true, user });
+    return res.json({ success: true, user });
   }
 };
 

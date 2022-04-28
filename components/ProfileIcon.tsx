@@ -1,27 +1,21 @@
 import { NextPage } from "next";
 import { Role } from "@prisma/client";
-import gravatar from "gravatar";
+import { useAppSelector } from "@libs/client/useRedux";
 
 interface props {
   name: string;
   role: Role;
-  avatar?: string;
+  file?: string;
 }
 
-const ProfileIcon: NextPage<props> = ({ name, role, avatar }) => {
+const ProfileIcon: NextPage<props> = ({ name, role, file }) => {
+  const avatar = useAppSelector((state) => state.user.avatar);
   return (
     <div className="flex items-center justify-start w-fit space-x-3 p-5 cursor-pointer scale transition">
       <img
         className="rounded-full w-8 h-8"
         alt={"avatar"}
-        src={
-          avatar
-            ? avatar
-            : `http://${gravatar.url("name", {
-                s: "34",
-                d: "retro",
-              })}`
-        }
+        src={file ? file : avatar}
       />
       <div className="flex flex-col font-md">
         <h3 className="text-gray-800">{name}</h3>

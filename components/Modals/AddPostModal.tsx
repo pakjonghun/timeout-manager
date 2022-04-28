@@ -35,7 +35,6 @@ const AddPostModal: NextPage<props> = ({ isShow, onClose, onConfirm }) => {
 
   const onValid = useCallback(
     (value: form) => {
-      console.log(value);
       addNoticeMutate(value);
     },
     [addNoticeMutate]
