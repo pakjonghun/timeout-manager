@@ -14,7 +14,7 @@ const handler = async (
 ) => {
   const {
     page,
-    createdAt = "desc",
+    createdAt,
     end,
     start,
     duration,
@@ -24,7 +24,6 @@ const handler = async (
     endDate,
     dates,
   } = req.query as GetRecordRequest;
-
   let beforeDate = startDate;
   let afterDate = endDate;
 
@@ -50,7 +49,7 @@ const handler = async (
       afterDate && {
         createdAt: {
           gte: new Date(beforeDate),
-          lte: addDays(new Date(afterDate), 1),
+          lte: addDays(new Date(afterDate), 2),
         },
       }),
     ...(beforeDate &&
@@ -77,13 +76,15 @@ const handler = async (
     });
   }
 
-  const orderBy = {
+  let orderBy = {
     ...(name && { user: { name } }),
     ...(createdAt && { createdAt }),
     ...(start && { start }),
     ...(end && { end }),
     ...(duration && { duration }),
   };
+
+  if (!Object.keys(orderBy).length) orderBy = { createdAt: "desc" };
 
   if (req.method === "GET") {
     if (req.session.user?.role === "USER" && keyWord?.trim()) {

@@ -88,7 +88,7 @@ const Auth = () => {
               },
             })}
             label="authNumber"
-            placeholder="본인 휴대폰으로 전송된 5자리 숫자를 입력하세요."
+            placeholder="휴대폰으로 전송된 5자리 숫자를 입력하세요."
             id="authNumber"
           />
           <ErrorMessage classes="ml-1" message={errors.authNumber?.message} />

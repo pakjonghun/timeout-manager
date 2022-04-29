@@ -27,7 +27,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "libs/client/constants.txs"
+    "libs/client/constants.txs",
+    "jest.config.js"
   ],
   "exclude": ["node_modules"]
 }

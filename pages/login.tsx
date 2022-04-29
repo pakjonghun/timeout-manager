@@ -10,8 +10,8 @@ import { Login } from "@libs/client/types";
 import { useForm } from "react-hook-form";
 import { useLoginMutation } from "@store/services/user";
 import { toast } from "react-toastify";
-const Phone = dynamic(() => import("@components/Login/PhoneInput"));
-const Email = dynamic(() => import("@components/Login/EmailInput"));
+const Phone = dynamic(() => import("@components/User/PhoneInput"));
+const Email = dynamic(() => import("@components/User/EmailInput"));
 
 export interface phoneForm {
   phone: string;
@@ -154,7 +154,11 @@ const Login = () => {
             <Email errors={errors} register={register} />
           )}
 
-          <LoadingButton isLoading={isLoading} buttonName="Login" />
+          <LoadingButton
+            isValid={loginType !== "email"}
+            isLoading={isLoading}
+            buttonName="Login"
+          />
           <span className="ml-2 font-medium text-sm text-gray-500">
             계정이 없다면?
             <Link href="/join">

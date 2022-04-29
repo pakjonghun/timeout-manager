@@ -15,6 +15,7 @@ const withMethod =
       const { isPrivate = true, methods, handler } = args;
       const isMethodMatch = methods.includes(req.method! as Methods);
       if (!isMethodMatch) return res.status(405).json({ success: false });
+
       if (isPrivate && !req.session.user) {
         return res.status(401).json({ success: false });
       }

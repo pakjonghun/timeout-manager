@@ -10,6 +10,12 @@ import ModalButtons from "./ModalButtons";
 import AvatarInput from "@components/AvatarInput";
 import { useAppDispatch } from "@libs/client/useRedux";
 import { toast } from "react-toastify";
+import ErrorMessage from "@components/ErrorMessage";
+import {
+  emailValidate,
+  nameValidate,
+  phoneValidate,
+} from "@libs/client/constants";
 
 interface props {
   isShow: boolean;
@@ -17,9 +23,9 @@ interface props {
 }
 
 interface form {
-  name?: string;
-  phone?: string;
-  email?: string;
+  name: string;
+  phone: string;
+  email: string;
   avatar?: FileList;
 }
 
@@ -28,22 +34,38 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { data: me, isSuccess } = useGetMeQuery("");
   const [avatarPrevies, setAvatarPreview] = useState("");
-  const { register, handleSubmit, watch, setValue } = useForm<form>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<form>({
     mode: "all",
   });
   const [updateProfileMutate, { isError, isSuccess: isEditProfilSuccess }] =
     useUpdateProfileMutation();
 
   const previewImage = watch("avatar");
+  const user = me?.user;
 
   useEffect(() => {
-    const user = me?.user;
-    if (isSuccess) {
-      setValue("name", user?.name);
-      setValue("email", user?.email);
-      setValue("phone", user?.phone);
+    reset();
+    if (user?.name && user.email && user.phone) {
+      setValue("name", user.name);
+      setValue("email", user.email);
+      setValue("phone", user.phone);
     }
-  }, [me, isSuccess, dispatch, setValue]);
+  }, [isShow, user, reset, setValue]);
+
+  useEffect(() => {
+    if (isSuccess && user?.name && user.email && user.phone) {
+      setValue("name", user.name);
+      setValue("email", user.email);
+      setValue("phone", user.phone);
+    }
+  }, [isSuccess, user, setValue]);
 
   useEffect(() => {
     if (previewImage?.length) {
@@ -149,29 +171,43 @@ const EditProfileModal: NextPage<props> = ({ isShow, onClose }) => {
               id="editAvatar"
             />
             <Input
-              register={register("name")}
+              register={register("name", nameValidate)}
               styles={{ marginTop: "3px" }}
               label="Name"
               placeholder="Name"
               id="name"
               size="lg"
             />
+            <ErrorMessage message={errors.name?.message} />
             <Input
-              register={register("phone")}
+              register={register(
+                "phone",
+                phoneValidate(
+                  (res: Response) => res.status >= 400 || "사용중인 번호입니다."
+                )
+              )}
               styles={{ marginTop: "3px" }}
               label="Phone"
               placeholder="Phone"
               id="phone"
               size="lg"
             />
+            <ErrorMessage message={errors.phone?.message} />
             <Input
-              register={register("email")}
+              register={register(
+                "email",
+                emailValidate(
+                  (res: Response) =>
+                    res.status >= 400 || "사용중인 이메일 입니다."
+                )
+              )}
               styles={{ marginTop: "3px" }}
               label="Email"
               placeholder="Email"
               id="email"
               size="lg"
             />
+            <ErrorMessage message={errors.email?.message} />
             <ModalButtons
               isLoading={isLoading}
               onClose={onClose}

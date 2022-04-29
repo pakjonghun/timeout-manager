@@ -48,3 +48,55 @@ export const sideMenus = (avatar: string) => [
     link: "/logout",
   },
 ];
+
+export const phoneValidate = (cb: (res: Response) => boolean | string) => ({
+  required: "휴대폰 번호를 입력하세요",
+  pattern: {
+    value: /^010\-[\d]{4}\-[\d]{4}$/,
+    message: "휴대폰 번호는 010-0000-0000입니다.",
+  },
+  validate: {
+    isExist: (v: string) =>
+      fetch("/api/users/existence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: v }),
+      })
+        .then(cb)
+        .catch(() => "서버에서 오류가 발생했습니다."),
+  },
+});
+
+export const emailValidate = (cb: (res: Response) => boolean | string) => ({
+  required: "이메일을 입력하세요",
+  pattern: {
+    value: /^[a-zA-Z0-9]{1,20}\@[a-zA-Z0-9]{1,20}\.[a-zA-Z]{1,10}$/,
+    message: "이메일 형식이 올바르지 않습니다.",
+  },
+  validate: {
+    isSpace: (v: string) => !/[\s]/.test(v) || "공백은 포함 할 수 없습니다.",
+    isExist: (v: string) =>
+      fetch("/api/users/existence", {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: v }),
+      })
+        .then(cb)
+        .catch(() => "서버에서 오류가 발생했습니다."),
+  },
+});
+
+export const nameValidate = {
+  required: "이름을 입력하세요.",
+  pattern: {
+    value: /^[a-zA-Z가-힣]{2,20}$/g,
+    message: "이름은 2~15자 문자 입니다.",
+  },
+  validate: {
+    isChar: (v: string) =>
+      !/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g.test(v) ||
+      "특수문자는 포함될 수 없습니다.",
+    isNumber: (v: string) => !/[\d]/.test(v) || "숫자는 포함할 수 없습니다.",
+    isSpace: (v: string) => !/[\s]/.test(v) || "공백은 포함 할 수 없습니다.",
+  },
+};

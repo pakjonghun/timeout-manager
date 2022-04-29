@@ -36,7 +36,8 @@ const workTime = api.injectEndpoints({
         if (endDate) array.push({ key: "endDate", value: endDate });
         if (startDate) array.push({ key: "startDate", value: startDate });
         if (keyWord) array.push({ key: "keyWord", value: keyWord });
-        if (dates) array.push({ key: "dates", value: JSON.stringify(dates) });
+        if (dates.length)
+          array.push({ key: "dates", value: JSON.stringify(dates) });
         if (sortKey && sortValue) {
           array.push({ key: sortKey, value: sortValue });
         }

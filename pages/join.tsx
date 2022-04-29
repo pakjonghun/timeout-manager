@@ -8,6 +8,11 @@ import LoadingButton from "@components/LoadingButton";
 import { useForm } from "react-hook-form";
 import { useJoinMutation } from "@store/services/user";
 import { toast } from "react-toastify";
+import {
+  emailValidate,
+  nameValidate,
+  phoneValidate,
+} from "@libs/client/constants";
 
 interface form {
   name: string;
@@ -69,69 +74,31 @@ const Join = () => {
           className="flex flex-col space-y-3"
         >
           <Input
-            register={register("email", {
-              required: "이메일을 입력하세요",
-              pattern: {
-                value: /[\w\d].+\@[\w].+\.[\w]{1,4}/,
-                message: "이메일 형식이 올바르지 않습니다.",
-              },
-              validate: {
-                isSpace: (v) =>
-                  !/[\s]/.test(v) || "공백은 포함 할 수 없습니다.",
-                isExist: (v) =>
-                  fetch("/api/users/existence", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: v }),
-                  })
-                    .then(
-                      (res) => res.status >= 400 || "사용중인 이메일 입니다."
-                    )
-                    .catch(() => "서버에서 오류가 발생했습니다."),
-              },
-            })}
+            register={register(
+              "email",
+              emailValidate(
+                (res) => res.status >= 400 || "사용중인 이메일 입니다."
+              )
+            )}
             label="email"
             placeholder="id@email.com"
             id="signupEmail"
           />
           <ErrorMessage message={errors.email?.message} />
           <Input
-            register={register("phone", {
-              required: "휴대폰 번호를 입력하세요",
-              pattern: {
-                value: /010\-[\d]{4}\-[\d]{4}/,
-                message: "휴대폰 번호는 010-1234-1234.",
-              },
-              validate: {
-                isExist: (v) =>
-                  fetch("/api/users/existence", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ phone: v }),
-                  })
-                    .then((res) => res.status >= 400 || "사용중인 번호입니다.")
-                    .catch(() => "서버에서 오류가 발생했습니다."),
-              },
-            })}
+            register={register(
+              "phone",
+              phoneValidate(
+                (res: Response) => res.status >= 400 || "사용중인 번호입니다."
+              )
+            )}
             label="phone"
             placeholder="010-1234-1234"
             id="signupPhone"
           />
           <ErrorMessage message={errors.phone?.message} />
           <Input
-            register={register("name", {
-              required: "이름을 입력하세요.",
-              pattern: {
-                value: /[a-zA-Z가-힣]{2,5}/,
-                message: "이름은 2~5자 문자 입니다.",
-              },
-              validate: {
-                isNumber: (v) =>
-                  !/[\d]/.test(v) || "숫자는 포함할 수 없습니다.",
-                isSpace: (v) =>
-                  !/[\s]/.test(v) || "공백은 포함 할 수 없습니다.",
-              },
-            })}
+            register={register("name", nameValidate)}
             label="name"
             placeholder="홍길동"
             id="signupName"
