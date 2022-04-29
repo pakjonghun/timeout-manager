@@ -6,7 +6,7 @@ import { pageTake } from "@libs/server/constants";
 import { getCanStartTime } from "@libs/server/utils";
 import { GetRecordRequest } from "@libs/client/types/dataTypes";
 import { GetRecordResponse } from "@libs/server/types/dataTypes";
-import { addDays } from "date-fns";
+import { format, set, addDays } from "date-fns";
 
 const handler = async (
   req: NextApiRequest,
@@ -55,7 +55,7 @@ const handler = async (
     ...(beforeDate &&
       !afterDate && {
         createdAt: {
-          gte: addDays(new Date(beforeDate), 1),
+          gte: new Date(beforeDate),
         },
       }),
   };
@@ -124,15 +124,17 @@ const handler = async (
     }
 
     const isAdmin = req.session?.user?.role === "ADMIN";
+    const isSearching = startDate || endDate || dates?.length || keyWord;
     const records = await client.workTimes.findMany({
       where: {
-        ...(!isAdmin && {
-          start: {
-            gte: getCanStartTime(),
-          },
-        }),
         ...searchCondition,
         ...(OR.length && { OR }),
+        ...(isAdmin &&
+          !isSearching && {
+            start: {
+              gte: getCanStartTime(),
+            },
+          }),
       },
       take: pageTake,
       skip: (+page - 1) * pageTake,

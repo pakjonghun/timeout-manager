@@ -22,9 +22,9 @@ type TheadState = {
 
 const adminByDayThead: TheadState = {
   day: { sort: null, colSpan: 3 },
-  count: { sort: null, colSpan: 2 },
-  average: { sort: null, colSpan: 2 },
-  ended: { sort: null, colSpan: 2 },
+  count: { colSpan: 2 },
+  average: { colSpan: 2 },
+  ended: { colSpan: 2 },
 };
 
 const timerThead: TheadState = {

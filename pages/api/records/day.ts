@@ -24,7 +24,7 @@ const handler = async (
     endDate,
     keyWord,
     page,
-    day = "asc",
+    day = "desc",
     end,
     start,
     duration,
@@ -66,20 +66,6 @@ const handler = async (
       }),
       ...(OR.length && { OR }),
     },
-    orderBy: {
-      day,
-      ...((end || start) && {
-        _count: {
-          end: "asc",
-          start: "desc",
-        },
-      }),
-      ...(duration && {
-        _avg: {
-          duration,
-        },
-      }),
-    },
     _count: {
       end: true,
       start: true,
@@ -89,6 +75,10 @@ const handler = async (
     },
     skip: (+page - 1) * pageTake,
     take: pageTake,
+
+    orderBy: {
+      day,
+    },
   });
 
   const totalPage = Math.ceil(records.length / pageTake);

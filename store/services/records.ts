@@ -24,6 +24,11 @@ const workTime = api.injectEndpoints({
     getRecordWorkTimes: build.query<GetRecordResponse, void>({
       async queryFn(_, api, __, fetch) {
         const state = api.getState() as RootState;
+
+        if (state.search.standard === "date") {
+          return { data: { success: false } };
+        }
+
         const keyWord = state.search.keyWord;
         const page = state.record.currentPage;
         const startDate = state.search.startDate;

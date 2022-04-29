@@ -1,15 +1,26 @@
+import { useEffect } from "react";
 import Layout from "@components/Layout";
 import Records from "@components/Records";
 import RecordByDay from "@components/RecordByDay";
 import SearchInput from "@components/SearchInput";
 import PrivateLoader from "@components/PrivateLoader";
-import { useAppSelector } from "@libs/client/useRedux";
+import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import { joinStyleClass } from "@libs/client/utils";
+import { reset as resetSearch } from "@store/reducer/search";
+import { reset } from "@store/reducer/record";
 
 const Search = () => {
+  const dispatch = useAppDispatch();
   const standard = useAppSelector((state) => state.search.standard);
   const userRole = useAppSelector((state) => state.user.role);
   const isFilterShow = useAppSelector((state) => state.search.isShowFilter);
+
+  useEffect(() => {
+    return () => {
+      dispatch(reset());
+      dispatch(resetSearch());
+    };
+  }, [dispatch]);
 
   return (
     <Layout

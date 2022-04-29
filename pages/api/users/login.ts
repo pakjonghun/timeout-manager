@@ -39,7 +39,6 @@ const handler = async (
     const authToken = process.env.TWILO_TOKEN;
     const messenger = require("twilio")(accountSid, authToken);
     const phoneNumber = `+82${phone.replace(/-/g, "").trim()}`;
-
     messenger.messages
       .create({
         body: authKey,

@@ -41,12 +41,12 @@ const EditPost: NextPage<props> = ({
     mode: "all",
   });
 
+  const [editNoticeMutate, { isError, isLoading }] = useEditNoticeMutation();
+
   useEffect(() => {
     setValue("title", preTitle);
     setValue("description", preDesc);
   }, [setValue, preTitle, preDesc]);
-
-  const [editNoticeMutate, { isError, isLoading }] = useEditNoticeMutation();
 
   useEffect(() => {
     if (isError) toast.error("공지글 편집이 실패했습니다.");
@@ -59,8 +59,9 @@ const EditPost: NextPage<props> = ({
         id,
       };
       editNoticeMutate(payload);
+      onConfirm();
     },
-    [editNoticeMutate, id]
+    [id, editNoticeMutate, onConfirm]
   );
 
   return (

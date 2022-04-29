@@ -5,7 +5,12 @@ import { useAppDispatch, useAppSelector } from "@libs/client/useRedux";
 import useSort from "@libs/client/useSort";
 import { useRouter } from "next/router";
 import Spin from "@components/Spin";
-import { setDates, setStandard } from "@store/reducer/search";
+import {
+  resetDate,
+  resetDates,
+  setDates,
+  setStandard,
+} from "@store/reducer/search";
 import { useGetRecordsByDayQuery } from "@store/services/search";
 import { useGetRecordWorkTimesQuery } from "@store/services/records";
 import { toast } from "react-toastify";
@@ -23,6 +28,8 @@ const RecordTable = ({}) => {
   const onRowClick = useCallback(
     (day: string) => {
       dispatch(setStandard("name"));
+      dispatch(resetDate());
+      dispatch(resetDates());
       dispatch(setDates(day));
       refetch();
     },
@@ -31,7 +38,7 @@ const RecordTable = ({}) => {
 
   if (userRole !== "ADMIN") {
     toast.warn("권한이 없습니다.");
-    router.push("/");
+    router.replace("/");
   }
 
   if (isLoading) {

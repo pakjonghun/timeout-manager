@@ -31,6 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return res.json({ success: true, posts });

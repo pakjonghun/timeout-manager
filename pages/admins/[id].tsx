@@ -22,7 +22,7 @@ interface props {
 const PostDetail: NextPage<props> = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: post } = useGetPostQuery({ id: +id! });
+  const { data: post } = useGetPostQuery({ id: +id! }, { skip: !id });
   const { isShowModal, onHideModal, onShowModal } = useModal("postEdit");
   const { onHideModal: onHideDeleteModal, onShowModal: onShowDeleteModal } =
     useModal("postDelete");
@@ -40,7 +40,7 @@ const PostDetail: NextPage<props> = () => {
     if (!post?.post) return;
     deleteNoticeMutate({ id: post.post.id });
     onHideDeleteModal();
-    router.push("/admin");
+    router.replace("/admins");
   }, [post, router, onHideDeleteModal, deleteNoticeMutate]);
 
   if (!post?.post) {

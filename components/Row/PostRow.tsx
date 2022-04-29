@@ -15,7 +15,7 @@ const PostRow: NextPage<props> = ({ index, data, styles, isPickable }) => {
   const role = useAppSelector((state) => state.user.role);
 
   return (
-    <Link href={`/${role === "ADMIN" ? "admin" : "notices"}/${data.id}`}>
+    <Link href={`/${role === "ADMIN" ? "admins" : "notices"}/${data.id}`}>
       <a>
         <li
           style={styles}

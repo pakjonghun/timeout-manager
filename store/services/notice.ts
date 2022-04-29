@@ -51,7 +51,7 @@ const notice = api.injectEndpoints({
         url: `notices/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_, __, args) => [{ id: args.id, type: "Notice" }],
+      invalidatesTags: (_, __, args) => [{ id: +args.id, type: "Notice" }],
     }),
   }),
 });

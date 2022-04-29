@@ -1,7 +1,5 @@
-import { format } from "date-fns";
-import { canStartTime } from "./constants";
+import { set } from "date-fns";
+import { startHour } from "./constants";
 
-export const getCanStartTime = () => {
-  const today = format(new Date(), "yyyy-MM-dd");
-  return new Date(`${today} ${canStartTime}`);
-};
+export const getCanStartTime = () =>
+  new Date(set(new Date(), { hours: startHour, minutes: 0 }));
